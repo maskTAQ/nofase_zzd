@@ -1,0 +1,3 @@
+rootProject.name = 'nofase_zzd'
+
+include ':app'
