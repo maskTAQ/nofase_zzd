@@ -5,54 +5,79 @@
  */
 
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { BackHandler, Platform, ToastAndroid, View, NativeModules } from "react-native";
+import { Provider, connect } from "react-redux";
+import { addNavigationHelpers } from "react-navigation";
+import { createStore } from 'redux';
+import PropTypes from 'prop-types';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import Navigation from "src/Navigation";
+import AppReducer from 'src/reducers';
+import initStore from 'src/store';
+import { Tip } from 'src/components';
+import action from "src/action";
 
-type Props = {};
-export default class App extends Component<Props> {
+class App extends Component {
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+    nav: PropTypes.object.isRequired,
+  };
+  componentDidMount() {
+    console.log(Platform.OS, 999)
+    if (Platform.OS === "android") {
+      BackHandler.addEventListener("hardwareBackPress", this.handleBack);
+    }
+
+  }
+  componentWillUnmount() {
+    if (Platform.OS === "android") {
+      BackHandler.removeEventListener("hardwareBackPress", this.handleBack);
+    }
+  }
+  handleBack = () => {
+    const { nav } = this.props;
+    const routeName = nav.routes[nav.index].routeName;
+    if (nav.routes.length > 1 && !["Home"].includes(routeName)) {
+      this.props.dispatch(action.navigate.back());
+      return true;
+    }
+    if (routeName === "Home") {
+      if (this.lastBack && new Date().getTime() - this.lastBack < 2000) {
+        BackHandler.exitApp()
+      } else {
+        this.lastBack = new Date().getTime();
+        ToastAndroid.show("再按一次返回键退出程序", 2000);
+      }
+      return true;
+    }
+    return false;
+  };
   render() {
+    const { dispatch, nav } = this.props;
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
-    );
+      <Navigation navigation={addNavigationHelpers({ dispatch, state: nav })} />
+    )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+const mapStateToProps = (state) => {
+  return ({
+    nav: state.nav
+  })
+};
+
+const AppWithNavigationState = connect(mapStateToProps)(App);
+
+export default class Root extends Component {
+  store = createStore(AppReducer, initStore);
+  render() {
+    return (
+      <Provider store={this.store}>
+        <View style={{ flex: 1 }}>
+          <AppWithNavigationState />
+          <Tip />
+        </View>
+      </Provider>
+    );
+  }
+}

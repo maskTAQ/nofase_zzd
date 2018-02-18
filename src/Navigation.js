@@ -1,14 +1,14 @@
 import { StackNavigator } from "react-navigation";
 
-import {
-  Login,
-  
-} from "src/pages";
+import { Home, Login } from "src/pages";
 
 export const RouteConfigs = {
   Login: {
     screen: Login
   },
+  Home: {
+    screen: Home
+  }
 };
 
 export default StackNavigator(RouteConfigs, {
