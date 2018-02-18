@@ -9,7 +9,7 @@ export default {
     flexDirection: "row"
   },
   item: {
-    width: 40,
+    width: 70,
     justifyContent: "center",
     alignItems: "center"
   },

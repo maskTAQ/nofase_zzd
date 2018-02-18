@@ -8,7 +8,13 @@ const renderChildren = (children, textStyle, disabled) => {
     return children;
   }
   return (
-    <Text style={[textStyle, disabled ? { color: "#fff" } : null]}>
+    <Text
+      style={[
+        { color: "#fff", fontSize: 14 },
+        textStyle,
+        disabled ? { color: "#fff" } : null
+      ]}
+    >
       {children}
     </Text>
   );
