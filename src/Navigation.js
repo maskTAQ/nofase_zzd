@@ -1,6 +1,6 @@
 import { StackNavigator } from "react-navigation";
 
-import { Home, Login } from "src/pages";
+import { Home, Login, HistoryConsume } from "src/pages";
 
 export const RouteConfigs = {
   Login: {
@@ -8,6 +8,9 @@ export const RouteConfigs = {
   },
   Home: {
     screen: Home
+  },
+  HistoryConsume: {
+    screen: HistoryConsume
   }
 };
 
