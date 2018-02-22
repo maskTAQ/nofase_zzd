@@ -1,7 +1,7 @@
 import AppNavigator from "src/Navigation";
 
 const initialNav = AppNavigator.router.getStateForAction(
-  AppNavigator.router.getActionForPathAndParams("HistoryConsume")
+  AppNavigator.router.getActionForPathAndParams("StoreAdd")
 );
 
 export default {

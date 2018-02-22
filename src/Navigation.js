@@ -1,6 +1,6 @@
 import { StackNavigator } from "react-navigation";
 
-import { Home, Login, HistoryConsume } from "src/pages";
+import { Home, Login, HistoryConsume, StoreAdd } from "src/pages";
 
 export const RouteConfigs = {
   Login: {
@@ -11,6 +11,9 @@ export const RouteConfigs = {
   },
   HistoryConsume: {
     screen: HistoryConsume
+  },
+  StoreAdd: {
+    screen: StoreAdd
   }
 };
 
