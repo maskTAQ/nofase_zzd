@@ -52,5 +52,102 @@ export default {
     width: 1,
     height: "100%",
     backgroundColor: "#3a9bfc"
+  },
+
+  //modal
+  modalContainer: {
+    flex: 1
+  },
+  modalContent: {
+    width: "100%",
+    borderWidth: 1.5,
+    borderColor: "#1a9cf3",
+    backgroundColor: "#fff",
+    borderRadius: 6
+  },
+  modalHeader: {
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderColor: "#1a9cf3"
+  },
+  modalTitle: {
+    fontSize: 20,
+    color: "#999"
+  },
+  modalButtonBox: {
+    padding: 20,
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+  modalButtonWrapper: {
+    width: "100%",
+    height: 40,
+    flexDirection: "row",
+    borderWidth: 1.5,
+    borderColor: "#1a9cf3",
+    borderRadius: 7,
+    overflow: "hidden"
+  },
+  modalOk: {
+    flex: 3,
+    backgroundColor: "#1a9cf3",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  modalOkText: {
+    fontSize: 16,
+    color: "#fff"
+  },
+  modalCancel: {
+    flex: 1,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  modalCancelText: {
+    fontSize: 16,
+    color: "#1a9cf3"
+  },
+
+  modalBodyO: {
+    height: 60,
+    marginLeft: 10,
+    marginRight: 10,
+    borderBottomWidth: 1,
+    borderColor: "#1a9cf3"
+  },
+  modalBodyOInput: {
+    flex: 1
+  },
+  modalBodyT: {
+    height: 40,
+    marginTop: 15,
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 5,
+    flexDirection: "row"
+    //alignItems:'center',
+  },
+  modalBodyTInputL: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#999",
+    borderRadius: 6
+  },
+  modalBodyTBorder: {
+    marginTop: 19,
+    marginLeft: 5,
+    marginRight: 5,
+    width: 8,
+    height: 2,
+    backgroundColor: "#999"
+  },
+  modalBodyTInputR: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#999",
+    borderRadius: 6
   }
 };
