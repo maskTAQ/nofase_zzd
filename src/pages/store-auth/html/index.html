@@ -1,0 +1,170 @@
+<html>
+<meta charset="UTF-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+
+<head>
+    <link rel="stylesheet" type="text/css" href="./css/index.css" />
+</head>
+
+<body>
+    <div class="from">
+        <div class="fromItem">
+            <label>店铺全称：</label>
+            <input id="StoreName" value="" placeholder="请输入名称" />
+        </div>
+        <div class="fromItem">
+            <label>单位类型</label>
+            <select name="" id="StoreType">
+                <option value="">-选择单位类型-</option>
+                <option value="1">个体户</option>
+                <option value="2">企业</option>
+                <option value="3">连锁</option>
+            </select>
+        </div>
+        <div class="fromItem" style="height:120px">
+            <label>营业执照:</label>
+            <input type="file" id="StoreCodeImg" style="display:none">
+            <label for="StoreCodeImg">
+                <img src="./img/u18.png" style="height: 73px;" id="StoreCodeImg-img">
+                <br>
+                <span>营业执照</span>
+            </label>
+
+        </div>
+        <div class="fromItem">
+            <label>号码：</label>
+            <input value="" placeholder="请输入名称" id="StoreTel" />
+        </div>
+        <div class="line"></div>
+        <div class="fromItem">
+            <label>法人姓名：</label>
+            <input value="" placeholder="请输入名称" id="LegalName" />
+        </div>
+        <div class="fromItem" style="height:120px">
+            <label>身份证：</label>
+            <input type="file" id="LegCodeImgA" style="display:none">
+            <label for="LegCodeImgA">
+                <img src="./img/u18.png" style="height: 73px;" id="LegCodeImgA-img">
+                <br>
+                <span>正面</span>
+            </label>
+            <input type="file" id="LegCodeImgB" style="display:none">
+            <label for="LegCodeImgB">
+                <img src="./img/u18.png" style="height: 73px;" id="LegCodeImgB-img">
+                <br>
+                <span>反面</span>
+            </label>
+
+        </div>
+        <div class="fromItem">
+            <label>号码:</label>
+            <input value="" placeholder="请输入名称" id="LegTel" />
+        </div>
+        <div class="line"></div>
+        <div class="fromItem">
+            <label>所在地：</label>
+            <div class="info">
+                <div>
+                    <select id="s_province" class="ellipsis" name="s_province"></select>
+                    <select id="s_city" class="ellipsis" name="s_city"></select>
+                    <select id="s_county" class="ellipsis" name="s_county"></select>
+                </div>
+                <div id="show"></div>
+            </div>
+        </div>
+        <!-- <div class="fromItem">
+            <label>详细</label>
+            <input value="" placeholder="请输入名称" id="Address" />
+        </div>
+        <div class="fromItem">
+            <label>录入位置</label>
+            <input value="" placeholder="请输入名称" />
+        </div> -->
+        <div class="line"></div>
+        <div class="fromItem">
+            <label>业务员</label>
+            <input value="" placeholder="请输入名称" id="SalesmanName" />
+        </div>
+        <div class="fromItem">
+            <label>合约编号</label>
+            <input value="" placeholder="请输入名称" id="ContractCode" />
+        </div>
+        <div class="fromItem" style="height:120px">
+            <label>合约上传:</label>
+            <input type="file" id="ContractImg" style="display:none">
+            <label for="ContractImg">
+                <img src="./img/u18.png" style="height: 73px;" id="ContractImg-img">
+                <br>
+                <span>合约</span>
+            </label>
+
+        </div>
+    </div>
+    <div id="save">保存</div>
+    <script src="./js/jq.js"></script>
+    <script src="./js/data.js"></script>
+    <script type="text/javascript">
+        _init_area();
+        document.getElementById('s_county').setAttribute('onchange', 'showArea()');
+        var showArea = function () {
+            var Province = document.getElementById('s_province').value
+            var City = document.getElementById('s_city').value
+            var Area = document.getElementById('s_county').value
+        }
+    </script>
+    <script>
+        var imgBase64 = {
+            StoreCodeImg:'',
+            LegCodeImgA:'',
+            LegCodeImgB:'',
+            ContractImg:''
+        };
+        var imgDomInfo = [$('#StoreCodeImg'), $('#LegCodeImgA'), $('#LegCodeImgB'), $('#ContractImg')];
+        imgDomInfo.forEach(function ($imgDom) {
+            $imgDom.change(function (e) {
+                var file = $imgDom[0].files[0]
+                var reader = new FileReader(file);
+                reader.readAsDataURL(file);
+                reader.onload = function (e) {
+                    $('#' + $imgDom[0].id + '-img').attr("src", e.target.result);
+                    imgBase64[$imgDom[0].id] = e.target.result;
+                };
+            });
+        })
+
+        var $save = $('#save');
+        $save.click(function () {
+
+            var Province = document.getElementById('s_province').value
+            var City = document.getElementById('s_city').value
+            var Area = document.getElementById('s_county').value
+            var options = $("#StoreType option:selected");
+            var StoreType = options.val()
+            var StoreName = $("#StoreName").val();
+            var StoreTel = $("#StoreTel").val();
+            var LegalName = $("#LegalName").val();
+            var LegTel = $("#LegTel").val();
+            //var Address = $("#StoreName").val();
+            var SalesmanName = $("#SalesmanName").val();
+            var ContractCode = $("#ContractCode").val();
+            var data = {
+                Province: Province,
+                City: City,
+                Area: Area,
+                StoreName: StoreName,
+                StoreType: StoreType,
+                StoreTel: StoreTel,
+                LegalName: LegalName,
+                LegTel: LegTel,
+                //Address: Address,
+                SalesmanName: SalesmanName,
+                ContractCode, ContractCode
+            }
+            window.postMessage(JSON.stringify(Object.assign({}, data, imgBase64)));
+           
+        })
+
+    </script>
+</body>
+
+</html>

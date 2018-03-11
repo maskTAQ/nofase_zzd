@@ -1,7 +1,6 @@
 export default {
   container: {
     flex: 1,
-    justifyContent: "space-between",
     backgroundColor: "#efefef"
   },
   list: {
@@ -13,7 +12,7 @@ export default {
     height: 50,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   itemBorder: {
     height: 1,
@@ -31,29 +30,31 @@ export default {
     justifyContent: "center",
     alignItems: "center"
   },
-  itemValue: {
+  itemInput: {
+    flex: 1,
+    textAlign: 'right',
     fontSize: 14,
-    color: "#666"
+    color: "#666",
   },
-  nav: {
-    marginTop: 10,
-    marginBottom: 30,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  navItemText: {
+  itemUnit: {
     fontSize: 14,
-    color: "#3a9bfc"
+    color: "#666",
   },
-  navBorder: {
-    marginLeft: 2,
-    marginRight: 2,
-    width: 1,
-    height: "100%",
-    backgroundColor: "#3a9bfc"
-  },
+  buttonBox: {
+    margin:15,
+    height: 36,
 
+  },
+  submit: {
+    flex: 1,
+    borderRadius:6,
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor: '#2b9ee3',
+  },
+  submitText:{
+    fontSize:16,
+  },
   //modal
   modalContainer: {
     flex: 1

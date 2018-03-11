@@ -87,9 +87,7 @@ export default class CodeButton extends Component {
           Tip.success("验证码发送成功，请注意查收");
           this.isGetCode = true;
 
-          setTimeout(() => {
-            Tip.success(`验证码:${response} ---for test`);
-          }, 1000);
+          
         })
         .catch(e => {
           this.setState({ isRequestSmscode: false });

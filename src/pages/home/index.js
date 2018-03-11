@@ -1,14 +1,57 @@
 import React, { Component } from "react";
 import { View, Text, FlatList } from "react-native";
-//import PropTypes from "prop-types";
+import moment from "moment";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import { Header, Button, Icon, Input } from "src/components";
+import action from "src/action";
+import { EventHub, Tip } from "src/common";
+import { Header, Button, Icon, Input, Picker } from "src/components";
 import styles from "./style";
+
+@connect(state => {
+  const { adminAddressList, adminAddressInfo,storeBusInfoByDate } = state;
+  return { adminAddressList, adminAddressInfo, storeBusInfoByDate };
+})
 export default class Home extends Component {
   static defaultProps = {};
-  static propTypes = {};
-  state = {};
+  static propTypes = {
+    navigation: PropTypes.object
+  };
+  state = {
+    activeAddrIndex: 0,
+    isPickerVisible: false
+  };
+
+  componentWillMount() {
+
+    EventHub.emit("dispatch", "getAdminAddressList", "adminAddressList");
+    EventHub.emit("dispatch", "getAdminAddressInfo", "adminAddressInfo");
+   this.getStoreBusInfoByDate();
+
+  }
+  storeAddrList = [
+    { label: '广东省-深圳市-南山区', value: '0' },
+    { label: '广东省-深圳市-罗湖区', value: '1' },
+    { label: '广东省-深圳市-大鹏新区', value: '2' }
+  ];
+  getStoreBusInfoByDate(){
+    const { activeAddrIndex } = this.state;
+    EventHub.emit("dispatch", "getStoreBusInfoByDate", "storeBusInfoByDate", {
+      Address:this.storeAddrList[activeAddrIndex].label.replace(/-/g,''),
+      SDate:moment().format("YYYY-MM-DD 00:00"),
+      EDates:moment().format("YYYY-MM-DD 23:59"),
+    });
+  }
+  onAddrChange = (value) => {
+    this.setState({
+      activeAddrIndex: value,
+      isPickerVisible: false
+    })
+  }
+
   renderHeader() {
+    const { activeAddrIndex } = this.state;
     return (
       <View style={styles.header}>
         <Header
@@ -17,16 +60,29 @@ export default class Home extends Component {
             <Button textStyle={{ fontWeight: "bold" }}>分站端</Button>
           }
           RightComponent={
-            <Button>
+            <Button onPress={()=>{
+              this.props.navigation.dispatch(
+                action.navigate.go({ routeName: "StoreAdd" })
+              );
+            }}>
               <Icon size={30} source={require("./img/u21.png")} />
             </Button>
           }
-          title="广东省-深圳市-南山区"
+          titleComponent={
+            <Button onPress={() => {
+              this.setState({
+                isPickerVisible: true
+              })
+            }} style={styles.titleBox}>
+              <Text style={styles.titleText}>{this.storeAddrList[activeAddrIndex].label}</Text>
+              <Icon style={styles.titleIcon} size={20} source={require('./img/u305.png')} />
+            </Button>
+          }
         />
-        <Text style={styles.title}>今日营业额 15256.51 元，消费用户</Text>
+        <Text style={styles.consume}>今日营业额 15256.51 元，消费用户</Text>
         <Text style={styles.subTitle}>152 人/次</Text>
         <View style={styles.calendarWrapper}>
-          <Button>
+          <Button onPress={this.showPicker}>
             <Icon size={30} source={require("./img/u85.png")} />
           </Button>
         </View>
@@ -141,11 +197,23 @@ export default class Home extends Component {
     );
   }
   render() {
+    const { isPickerVisible } = this.state;
+
     return (
       <View style={styles.container}>
         {this.renderHeader()}
         {this.renderSearch()}
         {this.renderList()}
+        <Picker
+          visible={isPickerVisible}
+          onValueSelect={this.onAddrChange}
+          data={this.storeAddrList}
+          onRequestClose={() => {
+            this.setState({
+              isPickerVisible: false
+            })
+          }}
+        />
       </View>
     );
   }

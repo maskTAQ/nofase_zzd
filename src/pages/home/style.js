@@ -6,7 +6,17 @@ export default {
   header: {
     backgroundColor: "#1b9dea"
   },
-  title: {
+  titleBox:{
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center',
+  },
+  titleText:{
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#fff"
+  },
+  consume: {
     marginTop: 36,
     lineHeight: 20,
     fontSize: 14,

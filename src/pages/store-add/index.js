@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { View, FlatList, Text, ScrollView, Linking } from "react-native";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 import { Page, Button, Alert, Input } from "src/components";
 import action from "src/action";
+import api from 'src/api';
 import styles from "./style";
+
 
 const Layer = ({ isVisible, data, close }) => {
   const { title, children, onOK, onCancel } = data || {};
@@ -47,36 +50,52 @@ Layer.propTypes = {
   data: PropTypes.object,
   close: PropTypes.func
 };
+@connect(({ newStoreInfo, auth }) => {
+  return { newStoreInfo, auth }
+})
 export default class StoreAdd extends Component {
   static defaultProps = {};
   static propTypes = {
-    navigation: PropTypes.object
+    navigation: PropTypes.object,
+    newStoreInfo: PropTypes.object,
   };
   state = {
-    activeLayerIndex: NaN
-  };
-  store = {
+    activeLayerIndex: NaN,
     topListData: [
       {
         label: "店铺认证信息",
-        value: "",
+        value: "未认证",
+        key: 'authentication',
         onPress: () => {
-          this.setState({
-            activeLayerIndex: 0
-          });
+          this.props.navigation.dispatch(
+            action.navigate.go({ routeName: "StoreAuth" })
+          );
         }
       },
-      { label: "银行卡认证信息", value: "" },
-      { label: "店名(简称)", value: "优势健身工作室" },
-      { label: "位置", value: "深圳市龙岗区南湾街道龙岗大厦255" },
-      { label: "容纳人数", value: "45人" },
-      { label: "收费标准", value: "15/小时" }
+      {
+        label: "银行卡认证信息", value: "未认证",
+        onPress: () => {
+          this.props.navigation.dispatch(
+            action.navigate.go({ routeName: "BindBank" })
+          );
+        }
+      },
+      {
+        label: "位置", key: 'map', value: "未选择", onPress: () => {
+          this.props.navigation.dispatch(
+            action.navigate.go({ routeName: "Map" })
+          );
+        }
+      },
+      { label: "容纳人数", value: "45", key: 'PeopleNum', unit: '人' },
+      { label: "收费标准", value: "15", key: 'Charge', unit: '/小时' }
     ],
     bottomListData: [
-      { label: "店铺图库", value: "", onPress: () => {} },
+      { label: "店铺图库", value: "在商家端编辑", onPress: () => { } },
       {
         label: "营业时间",
-        value: "周一至周日 09:00022:30",
+        value: "未设置",
+        key: 'hour',
         onPress: () => {
           this.props.navigation.dispatch(
             action.navigate.go({ routeName: "BusinessHours" })
@@ -85,7 +104,8 @@ export default class StoreAdd extends Component {
       },
       {
         label: "设备管理",
-        value: "",
+        value: "未设置",
+        key: 'deviceManage',
         onPress: () => {
           this.props.navigation.dispatch(
             action.navigate.go({ routeName: "DeviceManage" })
@@ -94,124 +114,135 @@ export default class StoreAdd extends Component {
       },
       {
         label: "课程表",
-        value: "",
+        key: 'timetable',
+        value: "未设置",
         onPress: () => {
           this.props.navigation.dispatch(
             action.navigate.go({ routeName: "Timetable" })
           );
         }
       },
-      { label: "商家介绍/留言", value: "", onPress: () => {} },
+      { label: "商家介绍/留言", key: 'StoreRemarks', value: "" },
       {
         label: "客服电话",
-        value: "10477-5666666",
-        onPress: () => {
-          return Linking.openURL("tel:104775666666")
-            .then(supported => {
-              console.log(supported);
-            })
-            .catch(err => {
-              console.error("An error occurred", err);
-            });
-        }
-      }
-    ],
-    layerInfoArr: [
-      {
-        title: "店铺名称",
-        children: (
-          <View style={styles.modalBodyO}>
-            <Input
-              style={styles.modalBodyOInput}
-              placeholder="请填写店铺名称"
-            />
-          </View>
-        ),
-        onPress: () => {},
-        onCancel: () => {}
-      },
-      {
-        title: "客服电话",
-        children: (
-          <View style={styles.modalBodyT}>
-            <Input style={styles.modalBodyTInputL} placeholder="请填写区号" />
-            <View style={styles.modalBodyTBorder} />
-            <Input
-              style={styles.modalBodyTInputR}
-              placeholder="请填写电话号码"
-            />
-          </View>
-        ),
-        onPress: () => {},
-        onCancel: () => {}
+        key: 'CsTel',
+        value: "10477-5666666"
       }
     ]
   };
+  componentWillReceiveProps(nextProps) {
+    const { hour, bank, deviceManage, authentication, map, timetable } = nextProps.newStoreInfo;
+
+    this.setValueStatus('topListData', 'map', map);
+    this.setValueStatus('topListData', 'authentication', authentication);
+    this.setValueStatus('topListData', 'bank', bank);
+
+    this.setValueStatus('bottomListData', 'hour', hour);
+    this.setValueStatus('bottomListData', 'deviceManage', deviceManage);
+    this.setValueStatus('bottomListData', 'timetable', timetable);
+  }
+  setValueStatus(dataName, key, value) {
+    const data = Object.assign([], this.state[dataName]);
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].key === key) {
+        data[i].value = value ? '已填写' : '未填写'
+      }
+    }
+
+    this.setState({
+      [dataName]: data
+    })
+  }
   closeLayer = () => {
     this.setState({
       activeLayerIndex: NaN
     });
   };
-  renderItem(item) {
-    const { label, value, onPress } = item;
+  onValueChange = (type, item, i, v) => {
+    const nextData = Object.assign([], this.state[type]);
+    nextData[i].value = v;
+    this.setState({
+      [type]: nextData
+    });
+  }
+  addStore = () => {
+    const { topListData, bottomListData } = this.state;
+    const data = [].concat(topListData, bottomListData);
+
+    const result = {};
+    console.log(data)
+    data.forEach(item => {
+      const { key, value, onPress } = item;
+      if (key && !onPress) {
+        result[key] = value;
+      }
+
+    })
+    console.log(result, this.props.auth)
+    // api.addStore({
+    //   LegTel: '1212'
+    // })
+    //   .then(res => {
+    //     console.log(res)
+    //   })
+    //   .catch(e => {
+    //     console.log(e)
+    //   })
+  }
+  renderItem(type, item, i) {
+    const { label, value, onPress, unit } = item;
     return (
-      <Button onPress={onPress} style={styles.item}>
+      <Button disabled={!onPress} onPress={onPress} disabledStyle={{ backgroundColor: '#fff', }} style={styles.item}>
         <View style={styles.itemLabel}>
           <Text style={styles.itemLabelText}>{label}</Text>
         </View>
-        <Text style={styles.itemValue}>{value}</Text>
+        <Input onChangeText={(v) => this.onValueChange(type, item, i, v)} editable={!onPress} style={styles.itemInput} value={value} />
+        <Text style={styles.itemUnit}>{unit}</Text>
       </Button>
     );
   }
   renderTop() {
-    const { topListData } = this.store;
+    const { topListData } = this.state;
     return (
       <View style={styles.list}>
         <FlatList
           data={topListData}
           keyExtractor={item => item.label}
           ItemSeparatorComponent={() => <View style={styles.itemBorder} />}
-          renderItem={({ item }) => this.renderItem(item)}
+          renderItem={({ item, index }) => this.renderItem('topListData', item, index)}
         />
       </View>
     );
   }
   renderBottom() {
-    const { bottomListData } = this.store;
+    const { bottomListData } = this.state;
     return (
       <View style={[styles.list, { marginTop: 10 }]}>
         <FlatList
           data={bottomListData}
           keyExtractor={item => item.label}
           ItemSeparatorComponent={() => <View style={styles.itemBorder} />}
-          renderItem={({ item }) => this.renderItem(item)}
+          renderItem={({ item, index }) => this.renderItem('bottomListData', item, index)}
         />
       </View>
     );
   }
   render() {
-    const { activeLayerIndex } = this.state;
-    const { layerInfoArr } = this.store;
+
     return (
-      <Page title="店铺添加" LeftComponent={<View />}>
+      <Page title="店铺添加">
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.content}>
               {this.renderTop()}
               {this.renderBottom()}
             </View>
-            <View style={styles.nav}>
-              <Button textStyle={styles.navItemText}>某某健身</Button>
-              <View style={styles.navBorder} />
-              <Button textStyle={styles.navItemText}>常见问题</Button>
-            </View>
+            <View style={styles.buttonBox} >
+              <Button onPress={this.addStore} style={styles.submit} textStyle={styles.submitText}>添加店铺</Button></View>
           </View>
         </ScrollView>
-        <Layer
-          isVisible={!isNaN(activeLayerIndex)}
-          data={layerInfoArr[activeLayerIndex]}
-          close={this.closeLayer}
-        />
+
       </Page>
     );
   }

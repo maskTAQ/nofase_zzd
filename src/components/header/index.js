@@ -35,9 +35,9 @@ export default class Header extends Component {
       null
     ]),
     RightComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+    titleComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     style: PropTypes.object,
-    title: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
-      .isRequired,
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
     onLeftPress: PropTypes.func,
     titleStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     dispatch: PropTypes.func,
@@ -49,6 +49,7 @@ export default class Header extends Component {
       //onLeftPress,
       LeftComponent,
       RightComponent,
+      titleComponent,
       title,
       style = {},
       titleStyle,
@@ -74,7 +75,7 @@ export default class Header extends Component {
                 dispatch(action.navigate.back());
               })}
           </View>
-          <View style={styles.title}>{renderTitle(title, titleStyle)}</View>
+          <View style={styles.title}>{titleComponent ||renderTitle(title, titleStyle)}</View>
           <View style={styles.item}>{RightComponent}</View>
         </View>
       </View>

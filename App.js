@@ -16,14 +16,19 @@ import AppReducer from 'src/reducers';
 import initStore from 'src/store';
 import { Tip } from 'src/components';
 import action from "src/action";
+import api from "src/api";
+import { EventHub,CreateReduxField } from "src/common";
 
 class App extends Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     nav: PropTypes.object.isRequired,
   };
+  componentWillMount() {
+    //监听dispatch事件 由onDispatch统一发送action
+    EventHub.on('dispatch', this.onDispatch);
+  }
   componentDidMount() {
-    console.log(Platform.OS, 999)
     if (Platform.OS === "android") {
       BackHandler.addEventListener("hardwareBackPress", this.handleBack);
     }
@@ -33,6 +38,20 @@ class App extends Component {
     if (Platform.OS === "android") {
       BackHandler.removeEventListener("hardwareBackPress", this.handleBack);
     }
+  }
+  onDispatch = (apiUrl,reduxStoreKey,params) => {
+    const { dispatch } = this.props;
+    dispatch(CreateReduxField.action(reduxStoreKey,"loading"));
+    api[apiUrl](params)
+      .then(res => {
+        dispatch(
+          CreateReduxField.action(reduxStoreKey,"success", res)
+        );
+      })
+      .catch(e => {
+        dispatch(CreateReduxField.action(reduxStoreKey,"error"));
+      });
+      return 1;
   }
   handleBack = () => {
     const { nav } = this.props;

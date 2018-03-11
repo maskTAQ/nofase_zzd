@@ -39,7 +39,7 @@ const requestWrapper = (url, param = {}) => {
     baseURL: baseURL,
     url,
     method: "post",
-    timeout: 5000,
+    timeout: 50000,
     data: param
   });
 };
@@ -51,25 +51,41 @@ const post = (
   loading && Tip.loading();
   return requestWrapper(url, params)
     .then(res => {
-      const { data } = res;
+      const { data: Data } = res;
+      const { code, message, data } = Data;
+      console.log(Data, url);
       loading && Tip.dismiss();
-      if (String(data).length === 6) {
-        return Promise.resolve(data);
-      }
+      // if (
+      //   [
+      //     "/Store/GetStoreBusInfo",
+      //     "/Store/GetStoreUserList",
+      //     "/Store/GetStoreBusInfoByDate",
+      //     "/Store/GetStoreInfo"
+      //   ].includes(url)
+      // ) {
+      //   return Promise.resolve(data);
+      // }
 
-      if (data.rCode > 0) {
-        return Promise.resolve(data);
+      // if (data.reason === "操作成功") {
+      //   return Promise.resolve(data);
+      // }
+
+      if (code > 0) {
+        const d = data || message;
+        return Promise.resolve(d);
       } else {
-        Tip.fail(`error:${data.message}`);
-        return Promise.reject(data.message);
+        Tip.fail(`error:${message}`);
+        return Promise.reject(message);
       }
     })
     .catch(e => {
+      console.log(e, url);
       loading && Tip.dismiss();
       if (handleCatch) {
         Tip.fail(`error:${e}`);
+        return Promise.reject(e);
       }
-      return Promise.reject(e);
+      return null;
     });
 };
 export { post };

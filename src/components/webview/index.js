@@ -12,11 +12,32 @@ export default class Wv extends Component {
   };
   state = {};
   render() {
-    const { source, title } = this.props;
+    const { source, title,...others } = this.props;
+     /* eslint-disable */
+     const patchPostMessageFunction = function() {
+      var originalPostMessage = window.postMessage;
+
+      var patchedPostMessage = function(message, targetOrigin, transfer) {
+        originalPostMessage(message, targetOrigin, transfer);
+      };
+
+      patchedPostMessage.toString = function() {
+        return String(Object.hasOwnProperty).replace(
+          "hasOwnProperty",
+          "postMessage"
+        );
+      };
+
+      window.postMessage = patchedPostMessage;
+    };
+
+    const patchPostMessageJsCode =
+      "(" + String(patchPostMessageFunction) + ")();";
+
     return (
       <Page title={title}>
         <View style={{ flex: 1 }}>
-          <WebView source={source} />
+          <WebView source={source} injectedJavaScript={patchPostMessageJsCode} {...others}/>
         </View>
       </Page>
     );

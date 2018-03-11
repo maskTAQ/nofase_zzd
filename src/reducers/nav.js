@@ -24,7 +24,7 @@ const nav = (state, action) => {
         }
       }
       return AppNavigator.router.getStateForAction(
-        NavigationActions.navigate({ routeName: nextRouteName }),
+        NavigationActions.navigate({ routeName: nextRouteName,params }),
         state
       );
     }

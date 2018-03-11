@@ -16,7 +16,10 @@ export default {
   item: {
     height: 40,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+  },
+  itemLabel:{
+    color:'#333',
   },
   itemBorder: {
     height: 1,
