@@ -40,7 +40,7 @@ export default class StoreAuth extends Component {
                                 ]
                             )
                     }
-                    api.addStore(data)
+                    return api.addStore(data)
                         .then(res => {
                             console.log(data,res,999);
                             this.props.navigation.dispatch(

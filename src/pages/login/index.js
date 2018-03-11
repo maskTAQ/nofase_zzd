@@ -39,7 +39,7 @@ export default class Login extends Component {
         );
       })
       .catch(e => {
-        console.log(e);
+        Tip.fail(e);
       });
   };
   register = () => {

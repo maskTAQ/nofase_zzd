@@ -2,67 +2,67 @@ import React, { Component } from "react";
 import { View, Text, FlatList, StatusBar } from "react-native";
 //import PropTypes from "prop-types";
 
-import { Header, Button, Icon, Input, Alert } from "src/components";
+import {  Button, Icon, Input, Alert } from "src/components";
 import styles from "./style";
 
-const DeleteModal = () => {
-    const s = {
-        container: {
-            width: '100%',
-            alignItems: 'center',
-            paddingBottom: 15,
-            borderWidth: 1,
-            borderColor: '#1a9cf5',
-            borderRadius: 4,
-        },
-        title: {
-            height: 60,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        titleText: {
-            fontSize: 18,
-            color: '#333'
-        },
-        buttonGroup: {
-            width: '90%',
-            height: 42,
-            flexDirection: 'row',
-            borderRadius: 6,
-            borderWidth: 1,
-            borderColor: '#1a9cf5',
-        },
-        button: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        confirmText: {
-            fontSize: 16,
-        },
-        confirm: {
-            backgroundColor: '#1a9cf5',
-        },
+// const DeleteModal = () => {
+//     const s = {
+//         container: {
+//             width: '100%',
+//             alignItems: 'center',
+//             paddingBottom: 15,
+//             borderWidth: 1,
+//             borderColor: '#1a9cf5',
+//             borderRadius: 4,
+//         },
+//         title: {
+//             height: 60,
+//             justifyContent: 'center',
+//             alignItems: 'center',
+//         },
+//         titleText: {
+//             fontSize: 18,
+//             color: '#333'
+//         },
+//         buttonGroup: {
+//             width: '90%',
+//             height: 42,
+//             flexDirection: 'row',
+//             borderRadius: 6,
+//             borderWidth: 1,
+//             borderColor: '#1a9cf5',
+//         },
+//         button: {
+//             flex: 1,
+//             justifyContent: 'center',
+//             alignItems: 'center',
+//         },
+//         confirmText: {
+//             fontSize: 16,
+//         },
+//         confirm: {
+//             backgroundColor: '#1a9cf5',
+//         },
 
-        cancelText: {
-            color: '#1a9cf5',
-        }
-    };
-    return (
-        <Alert isVisible={true}>
-            <View style={s.container}>
-                <View style={s.title}>
-                    <Text style={s.titleText}>确定删除该分站管理吗？
-                    </Text>
-                </View>
-                <View style={s.buttonGroup}>
-                    <Button style={[s.button, s.confirm]} textStyle={s.confirmText}>确定</Button>
-                    <Button style={[s.button, s.cancel]} textStyle={s.cancelText}>取消</Button>
-                </View>
-            </View>
-        </Alert>
-    )
-}
+//         cancelText: {
+//             color: '#1a9cf5',
+//         }
+//     };
+//     return (
+//         <Alert isVisible={true}>
+//             <View style={s.container}>
+//                 <View style={s.title}>
+//                     <Text style={s.titleText}>确定删除该分站管理吗？
+//                     </Text>
+//                 </View>
+//                 <View style={s.buttonGroup}>
+//                     <Button style={[s.button, s.confirm]} textStyle={s.confirmText}>确定</Button>
+//                     <Button style={[s.button, s.cancel]} textStyle={s.cancelText}>取消</Button>
+//                 </View>
+//             </View>
+//         </Alert>
+//     )
+// }
 const EditModal = () => {
     const styles = {
         container: {

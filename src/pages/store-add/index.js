@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { View, FlatList, Text, ScrollView, Linking } from "react-native";
+import { View, FlatList, Text, ScrollView } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 import { Page, Button, Alert, Input } from "src/components";
 import action from "src/action";
-import api from 'src/api';
+//import api from 'src/api';
 import styles from "./style";
 
 
@@ -179,7 +179,7 @@ export default class StoreAdd extends Component {
       }
 
     })
-    console.log(result, this.props.auth)
+   
     // api.addStore({
     //   LegTel: '1212'
     // })

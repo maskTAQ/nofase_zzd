@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 import action from "src/action";
-import { EventHub, Tip } from "src/common";
+import { EventHub } from "src/common";
 import { Header, Button, Icon, Input, Picker } from "src/components";
 import styles from "./style";
 

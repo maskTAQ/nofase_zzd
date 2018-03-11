@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 import { Page, Button, Input, Icon } from "src/components";
 import action from "src/action";
-import { Tip } from "src/common";
 import styles from "./style";
 import { connect } from "react-redux";
 

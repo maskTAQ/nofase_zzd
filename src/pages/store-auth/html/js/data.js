@@ -1,3 +1,4 @@
+/* eslint-disable */
 function Dsy(){
     this.Items = {};
 }
@@ -15,6 +16,7 @@ function change(v){
         str+=("_"+(document.getElementById(s[i]).selectedIndex-1));
     };
     var ss=document.getElementById(s[v]);
+    /* eslint-disable */
     with(ss){
         length = 0;
         options[0]=new Option(opt0[v],opt0[v]);
@@ -28,7 +30,8 @@ function change(v){
             }
         }//end if v
         if(++v<s.length){change(v);}
-    }//End with
+    }//End with、
+    /* eslint-disable */
 }
 
 var dsy = new Dsy();

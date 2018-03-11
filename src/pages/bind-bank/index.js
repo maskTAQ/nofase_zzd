@@ -76,7 +76,7 @@ export default class BindBank extends Component {
     );
   }
   renderList() {
-    const { data, BankName } = this.state;
+    const { data } = this.state;
     return (
       <View style={styles.list}>
         {
