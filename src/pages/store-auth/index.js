@@ -23,37 +23,13 @@ export default class StoreAuth extends Component {
 
     };
     render() {
+        
         return (
             <WebView
                 title="店铺认证信息"
-                source={require('./html/index.html')}
+                url='http://101.200.196.202:8888/html/store/html/index.html'
                 ref={w => (this.webview = w)}
-                onMessage={e => {
-                    const data = JSON.parse(e.nativeEvent.data);
-                    for (const item in data) {
-                        if (!data[item])
-                            return Alert.alert(
-                                '提示',
-                                '请完整填写信息',
-                                [
-                                    { text: '确定', onPress: () => console.log('OK Pressed!') },
-                                ]
-                            )
-                    }
-                    return api.addStore(data)
-                        .then(res => {
-                            console.log(data,res,999);
-                            this.props.navigation.dispatch(
-                                action.editStoreInfo({
-                                    authentication: data
-                                })
-                            )
-                            return this.props.navigation.dispatch(
-                                action.navigate.back()
-                            );
-                        })
-
-                }}
+               
             />
         )
     }

@@ -4,11 +4,14 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 import action from "src/action";
+import api from 'src/api';
 import styles from "./style";
 import { Page, Input, Button, Picker } from "src/components";
-//import { Tip } from "src/common";
+import { Tip } from "src/common";
 
-@connect()
+@connect(({ newStoreInfo }) => {
+  return { newStoreInfo }
+})
 export default class BindBank extends Component {
   static propTypes = {
     navigation: PropTypes.object,
@@ -26,8 +29,8 @@ export default class BindBank extends Component {
     data: [
       { key: 'LegalName', label: '法人姓名', disabled: true, value: '', placeholder: '' },
       { key: 'LegCode', label: '法人身份证', disabled: true, value: '', placeholder: '' },
-      { key: 'BankName', label: '所属行', value: '请选择银行', placeholder: '' },
-      { key: 'CardNo', label: '法人身份证', value: '', placeholder: '请输入卡号' },
+      { key: 'BankName', label: '所属行', value: '', placeholder: '请选择银行' },
+      { key: 'CardNo', label: '卡号', value: '', placeholder: '请输入卡号' },
       { key: 'LegTel', label: '绑定法人\n手机号码', disabled: true, value: '', placeholder: '手机号码不可更改' }
     ],
     isPickerVisible: false
@@ -63,17 +66,30 @@ export default class BindBank extends Component {
     return '';
   }
   save = () => {
-    this.props.navigation.dispatch(
-      action.editStoreInfo({
-        bank: {
-          BankName: this.getValueByKey('BankName'),
-          CardNo: this.getValueByKey('CardNo'),
-        }
-      })
-    )
-    return this.props.navigation.dispatch(
-      action.navigate.back()
-    );
+    const BankName = this.getValueByKey('BankName'),
+      CardNo = this.getValueByKey('CardNo');
+
+    if(!BankName || !CardNo){
+      Tip.fail('请完整填写信息');
+    }else{
+      const { StoreId } = this.props.newStoreInfo.authentication;
+      api.bindBank({ StoreId, BankName, CardNo })
+        .then(res => {
+          this.props.navigation.dispatch(
+            action.editStoreInfo({
+              bank: {
+                BankName,
+                CardNo,
+              }
+            })
+          )
+          return this.props.navigation.dispatch(
+            action.navigate.back()
+          );
+        });
+    }
+    
+
   }
   renderList() {
     const { data } = this.state;
@@ -82,7 +98,6 @@ export default class BindBank extends Component {
         {
           data.map(item => {
             const { key, label, value, disabled, placeholder } = item;
-            console.log(disabled)
             if (key === 'BankName') {
               return (
                 <View style={styles.item} key={key}>
@@ -95,7 +110,7 @@ export default class BindBank extends Component {
                     this.setState({
                       isPickerVisible: true
                     })
-                  }}>{value}</Button>
+                  }}>{value || placeholder}</Button>
                 </View>
               )
             }
@@ -130,7 +145,9 @@ export default class BindBank extends Component {
           visible={isPickerVisible}
           onValueSelect={(value) => {
             this.handleValueChange('BankName', value);
-
+            this.setState({
+              isPickerVisible: false
+            });
           }}
           onRequestClose={() => {
             this.setState({

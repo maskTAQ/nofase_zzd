@@ -23,7 +23,10 @@ export default {
   },
   //新建店铺
   addStore(params){
-    console.log(params)
     return post("/Store/SaveStore",params);
+  },
+  //绑定银行卡
+  bindBank({StoreId,BankName,CardNo}){
+    return post("/Store/BindBank",{StoreId,BankName,CardNo});
   }
 };

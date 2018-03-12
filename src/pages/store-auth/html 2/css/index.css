@@ -1,0 +1,60 @@
+*{
+    margin: 0;
+    padding:0
+}
+body{
+    margin: 0;
+    padding:0
+}
+.from{
+    overflow: hidden;
+    width: 100%;
+}
+.fromItem{
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+    margin: 10px 0;
+    padding: 0 5%;
+}
+.fromItem label{
+    float: left;
+    width: 100px;
+}
+.fromItem input{
+    float: left;
+    height: 35px;
+    line-height: 35px;
+    border: none;
+    border-bottom: 1px solid #333;
+    width: 58%;
+}
+.fromItem select{
+    float: left;
+    height: 35px;
+    line-height: 35px;
+    border: none;
+    border: 1px solid #333;
+    width: 58%;
+}
+.info select {
+    width:20% !important;
+}
+#save{
+    width: 50%;
+    margin: 30px auto;
+    height: 40px;
+    line-height: 40px;
+    background: #2196F3;
+    text-align: center;
+    color: white;
+    border-radius: 7px;
+}
+.line{
+    height:15px;
+    width:100%;
+    background:#ececec
+}
+.fromItem span{
+    color:#2196F3
+}

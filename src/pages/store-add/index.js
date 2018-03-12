@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { Page, Button, Alert, Input } from "src/components";
 import action from "src/action";
 import { Tip } from 'src/common';
-//import api from 'src/api';
+import api from 'src/api';
 import styles from "./style";
 
 
@@ -74,7 +74,9 @@ export default class StoreAdd extends Component {
         }
       },
       {
-        label: "银行卡认证信息", value: "未认证",
+        label: "银行卡认证信息",
+        value: "未认证",
+        key: 'bank',
         onPress: () => {
           const { authentication } = this.props.newStoreInfo;
           if (authentication) {
@@ -98,7 +100,13 @@ export default class StoreAdd extends Component {
       { label: "收费标准", value: "15", key: 'Charge', unit: '/小时' }
     ],
     bottomListData: [
-      { label: "店铺图库", value: "在商家端编辑", onPress: () => { } },
+      {
+        label: "店铺图库", value: "未设置", key: 'ImgJson', onPress: () => {
+          this.props.navigation.dispatch(
+            action.navigate.go({ routeName: "ImgStore" })
+          );
+        }
+      },
       {
         label: "营业时间",
         value: "未设置",
@@ -129,7 +137,13 @@ export default class StoreAdd extends Component {
           );
         }
       },
-      { label: "商家介绍/留言", key: 'StoreRemarks', value: "" },
+      {
+        label: "商家介绍/留言", key: 'StoreRemarks', value: "未设置", onPress: () => {
+          this.props.navigation.dispatch(
+            action.navigate.go({ routeName: "Introduce" })
+          );
+        }
+      },
       {
         label: "客服电话",
         key: 'CsTel',
@@ -138,15 +152,19 @@ export default class StoreAdd extends Component {
     ]
   };
   componentWillReceiveProps(nextProps) {
-    const { hour, bank, deviceManage, authentication, map, timetable } = nextProps.newStoreInfo;
+    const { hour, bank, deviceManage, authentication, map, timetable, StoreRemarks, ImgJson } = nextProps.newStoreInfo;
 
     this.setValueStatus('topListData', 'map', map);
     this.setValueStatus('topListData', 'authentication', authentication);
     this.setValueStatus('topListData', 'bank', bank);
 
+
+    this.setValueStatus('bottomListData', 'ImgJson', ImgJson);
     this.setValueStatus('bottomListData', 'hour', hour);
     this.setValueStatus('bottomListData', 'deviceManage', deviceManage);
     this.setValueStatus('bottomListData', 'timetable', timetable);
+    this.setValueStatus('bottomListData', 'StoreRemarks', StoreRemarks);
+
   }
   setValueStatus(dataName, key, value) {
     const data = Object.assign([], this.state[dataName]);
@@ -174,7 +192,7 @@ export default class StoreAdd extends Component {
   //更新店铺信息
   saveStore = () => {
     const { topListData, bottomListData } = this.state;
-    const { hour, bank, deviceManage, map, timetable } = this.props.newStoreInfo;
+    const { authentication, hour, bank, deviceManage, map, timetable, StoreRemarks, ImgJson } = this.props.newStoreInfo;
     const data = [].concat(topListData, bottomListData);
 
     const result = {};
@@ -184,18 +202,29 @@ export default class StoreAdd extends Component {
         result[key] = value;
       }
     });
-    console.log({...result, ...hour, ...bank, ...deviceManage, ...map, ...timetable });
+
+    if (!authentication) {
+      return Tip.fail('请先认证店铺信息');
+    }
+    if (!bank) {
+      return Tip.fail('请先认证银行卡信息');
+    }
+    const params = { StoreId: authentication.StoreId, StoreRemarks, ImgJson, ...result, ...hour, ...bank, ...deviceManage, ...map, ...timetable }
 
 
-    // api.addStore({
-    //   LegTel: '1212'
-    // })
-    //   .then(res => {
-    //     console.log(res)
-    //   })
-    //   .catch(e => {
-    //     console.log(e)
-    //   })
+
+    api.addStore(params)
+      .then(res => {
+        Tip.success('添加店铺成功');
+        setTimeout(()=>{
+          this.props.navigation.dispatch(
+            action.navigate.go({ routeName: "Home" })
+          );
+        },1500)
+      })
+      .catch(e => {
+        console.log(e)
+      })
   }
   renderItem(type, item, i) {
     const { label, value, onPress, unit } = item;

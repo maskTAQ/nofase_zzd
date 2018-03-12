@@ -9,3 +9,5 @@ export { default as Timetable } from "./timetable";
 export {default as StoreAuth} from './store-auth';
 export {default as Map} from './map';
 export {default as BindBank} from './bind-bank';
+export {default as Introduce} from './introduce';
+export {default as ImgStore} from './img-store';

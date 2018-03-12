@@ -1,6 +1,6 @@
 import { StackNavigator } from "react-navigation";
 
-import { Home, Login, HistoryConsume, StoreAdd,SubAdmin ,BusinessHours,DeviceManage,Timetable,StoreAuth,Map,BindBank} from "src/pages";
+import { Home, Login, HistoryConsume, StoreAdd,SubAdmin ,BusinessHours,DeviceManage,Timetable,StoreAuth,Map,BindBank,Introduce,ImgStore} from "src/pages";
 
 export const RouteConfigs = {
   Login: {
@@ -35,6 +35,12 @@ export const RouteConfigs = {
   },
   BindBank:{
     screen:BindBank
+  },
+  Introduce:{
+    screen:Introduce
+  },
+  ImgStore:{
+    screen:ImgStore
   }
 };
 

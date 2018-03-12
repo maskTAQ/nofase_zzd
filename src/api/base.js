@@ -82,10 +82,11 @@ const post = (
       console.log(e, url);
       loading && Tip.dismiss();
       if (handleCatch) {
-        Tip.fail(`error:${e}`);
+        return Tip.fail(`error:${e}`);
+      }else{
         return Promise.reject(e);
       }
-      return null;
+     
     });
 };
 export { post };

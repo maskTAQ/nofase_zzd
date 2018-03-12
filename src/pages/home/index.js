@@ -25,9 +25,9 @@ export default class Home extends Component {
 
   componentWillMount() {
 
-    EventHub.emit("dispatch", "getAdminAddressList", "adminAddressList");
-    EventHub.emit("dispatch", "getAdminAddressInfo", "adminAddressInfo");
-   this.getStoreBusInfoByDate();
+    // EventHub.emit("dispatch", "getAdminAddressList", "adminAddressList");
+    // EventHub.emit("dispatch", "getAdminAddressInfo", "adminAddressInfo");
+   //this.getStoreBusInfoByDate();
 
   }
   storeAddrList = [
@@ -57,7 +57,11 @@ export default class Home extends Component {
         <Header
           style={{ backgroundColor: styles.header.backgroundColor }}
           LeftComponent={
-            <Button textStyle={{ fontWeight: "bold" }}>分站端</Button>
+            <Button onPress={()=>{
+              this.props.navigation.dispatch(
+                action.navigate.go({ routeName: "SubAdmin" })
+              );
+            }} textStyle={{ fontWeight: "bold" }}>分站端</Button>
           }
           RightComponent={
             <Button onPress={()=>{

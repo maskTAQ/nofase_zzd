@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Animated } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -16,7 +16,9 @@ export default class Login extends Component {
   };
   state = {
     phone: "13696526122",
-    code: "252320"
+    code: "536808",
+    isBgVisible: true,
+    viewMarginTop: new Animated.Value(0),
   };
   handleValueChange(type, value) {
     this.setState({
@@ -47,10 +49,11 @@ export default class Login extends Component {
       action.navigate.go({ routeName: "Register" })
     );
   };
+  
   render() {
-    const { phone, code } = this.state;
+    const { phone, code, isBgVisible } = this.state;
     return (
-      <View style={styles.container}>
+      <Animated.View style={[styles.container, { marginBottom: this.state.viewMarginTop }]}>
         <View style={styles.logo}>
           <Image
             source={require("src/images/login/logo.png")}
@@ -72,6 +75,16 @@ export default class Login extends Component {
               style={styles.formItemInput}
               placeholder="手机号"
               placeholderTextColor="#fff"
+              onFocus={() => {
+                this.setState({
+                  isBgVisible: false
+                })
+              }}
+              onBlur={() => {
+                this.setState({
+                  isBgVisible: true
+                })
+              }}
             />
           </View>
           <View style={styles.formItem}>
@@ -86,6 +99,16 @@ export default class Login extends Component {
               }}
               style={styles.formItemInput}
               placeholder="密码"
+              onFocus={() => {
+                this.setState({
+                  isBgVisible: false
+                })
+              }}
+              onBlur={() => {
+                this.setState({
+                  isBgVisible: true
+                })
+              }}
               placeholderTextColor="#fff"
             />
             <CodeButton ref={e => (this.codeRef = e)} phone={phone}>
@@ -106,20 +129,28 @@ export default class Login extends Component {
             </Button>
           </View>
         </View>
-        <Image
-          source={require("src/images/login/bg.png")}
-          style={styles.bg}
-          resizeMode="stretch"
-        />
-        <View style={styles.relevancechar}>
-          <Text style={styles.relevanceText}>关联登录</Text>
-          <Button textStyle={styles.registerText}>
+
+        {
+          isBgVisible && (
             <Image
-              source={require("src/images/login/wechat.png")}
-              style={styles.charImg}
-            />
-          </Button>
-        </View>
+              source={require("src/images/login/bg.png")}
+              style={styles.bg}
+              resizeMode="stretch"
+            />)
+        }
+        {
+          isBgVisible && (
+            <View style={styles.relevancechar}>
+              <Text style={styles.relevanceText}>关联登录</Text>
+              <Button textStyle={styles.registerText}>
+                <Image
+                  source={require("src/images/login/wechat.png")}
+                  style={styles.charImg}
+                />
+              </Button>
+            </View>)
+        }
+
         <ShareModal
           isVisible={false}
           username="上都牧人"
@@ -129,11 +160,11 @@ export default class Login extends Component {
           storeName="海里恩健身俱乐部"
           onlinePeople={20}
           addr="深南大道与前海教会处振业星海商业广场31"
-          close={() => {}}
+          close={() => { }}
         >
           <Text>12</Text>
         </ShareModal>
-      </View>
+      </Animated.View>
     );
   }
 }

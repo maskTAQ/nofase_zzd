@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .img-box {
+            width: 100%;
+        }
+
+        .img-box div {
+            display: inline-block;
+            position: relative;
+            width: 16%;
+            margin: 2%;
+            height: 100px;
+            text-align: center;
+        }
+
+        .img-box .img-content {
+            height: 60px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .img-box span {
+            color: #0398e5;
+            font-size: 13px;
+        }
+
+        .upimg {
+            height: 80px;
+            text-align: center;
+        }
+
+        .upimg img {
+            height: 80px;
+            text-align: center;
+        }
+
+        .img-content {
+            height: 60px;
+            text-align: center;
+        }
+
+        .img-del {
+            position: absolute;
+            right: 0px;
+            height: 20px;
+            width: 20px;
+            top: 0px;
+        }
+
+        .update,
+        .upload-img {
+
+            text-align: center;
+            width: 161px;
+            margin: 19px auto;
+            background: #0398e5;
+            height: 30px;
+            line-height: 30px;
+            color: white;
+            border-radius: 8px;
+        }
+
+        .update {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="file" id="imgFiles" multiple style="display:none">
+    <div class="upimg" for="imgFiles">
+        <img src="./img/upimg.png" alt="">
+    </div>
+    <div class="upload-img">
+        <label for="imgFiles">上传图片</label>
+    </div>
+
+    <div class="img-box"></div>
+    <div id="save" class="update">提交</div>
+
+</body>
+<script src="./jq.js"></script>
+<script>
+    var filesDom = $('#imgFiles')[0],
+        $imgBox = $('.img-box'),
+        $save = $('#save');
+    $(function () {
+        //提交给接口的图片数据
+        var preUpImgs = [
+            // {
+            //     ImgBase64: '',//base64图片编码
+            //     ImgNo: '',//编号
+            // }
+        ];
+        //代上传图片编码完成
+        
+        var toggleSubmitButtonVisible = function() {
+            if (preUpImgs.length) {
+                $save.show();
+            } else {
+                $save.hide();
+
+            }
+        }
+        var preUpImgsChange = function (base64) {
+            toggleSubmitButtonVisible();
+            //在这里 更改页面
+            $imgBox.append('<div>'
+                + '<img class="img-content" src="'
+                + base64
+                + '" alt=""/>'
+                + '<span>待上传</span>'
+                + '<img class="img-del" src="./img/del.png" slt=""/>'
+                + '</div>');
+        }
+        //img-del
+        $imgBox.on('click', '.img-del', function () {
+            var delIndex = $('.img-del').index(this);
+            preUpImgs.splice(delIndex, 1);
+            $imgBox.children().eq(delIndex).remove();
+            toggleSubmitButtonVisible();
+        });
+        //监听文件改变
+        $('#imgFiles').on('change', function () {
+            //将FileList对象转为数组遍历
+            var files = ([]).slice.call(filesDom.files);
+            $imgBox.html('')
+            files
+                //过滤图片之外的文件
+                .filter(function (item) {
+                    return item.type.indexOf('image') > -1
+                })
+                .forEach(function (file, i) {
+                    (function (file, i) {
+                        preUpImgs[i] = {
+                            ImgBase64: '',//base64图片编码
+                            ImgNo: Date.now(),//编号
+                        };
+                        var reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function (e) {
+                            preUpImgs[i].ImgBase64 = e.target.result;
+                            preUpImgsChange(e.target.result);
+                        };
+                    })(file, i);
+                })
+
+        });
+        //ajax提交
+        $save.click(function () {
+            window.postMessage(JSON.stringify(preUpImgs));
+        })
+    });
+</script>
+
+</html>
