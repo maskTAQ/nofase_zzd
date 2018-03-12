@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 
 import { Page, Button, Alert, Input } from "src/components";
 import action from "src/action";
+import { Tip } from 'src/common';
 //import api from 'src/api';
 import styles from "./style";
 
@@ -75,9 +76,15 @@ export default class StoreAdd extends Component {
       {
         label: "银行卡认证信息", value: "未认证",
         onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "BindBank" })
-          );
+          const { authentication } = this.props.newStoreInfo;
+          if (authentication) {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "BindBank" })
+            );
+          } else {
+            Tip.fail('请先完成店铺认证');
+          }
+
         }
       },
       {
@@ -143,13 +150,11 @@ export default class StoreAdd extends Component {
   }
   setValueStatus(dataName, key, value) {
     const data = Object.assign([], this.state[dataName]);
-
     for (let i = 0; i < data.length; i++) {
       if (data[i].key === key) {
         data[i].value = value ? '已填写' : '未填写'
       }
     }
-
     this.setState({
       [dataName]: data
     })
@@ -166,20 +171,22 @@ export default class StoreAdd extends Component {
       [type]: nextData
     });
   }
-  addStore = () => {
+  //更新店铺信息
+  saveStore = () => {
     const { topListData, bottomListData } = this.state;
+    const { hour, bank, deviceManage, map, timetable } = this.props.newStoreInfo;
     const data = [].concat(topListData, bottomListData);
 
     const result = {};
-    console.log(data)
     data.forEach(item => {
       const { key, value, onPress } = item;
       if (key && !onPress) {
         result[key] = value;
       }
+    });
+    console.log({...result, ...hour, ...bank, ...deviceManage, ...map, ...timetable });
 
-    })
-   
+
     // api.addStore({
     //   LegTel: '1212'
     // })
@@ -239,7 +246,7 @@ export default class StoreAdd extends Component {
               {this.renderBottom()}
             </View>
             <View style={styles.buttonBox} >
-              <Button onPress={this.addStore} style={styles.submit} textStyle={styles.submitText}>添加店铺</Button></View>
+              <Button onPress={this.saveStore} style={styles.submit} textStyle={styles.submitText}>添加店铺</Button></View>
           </View>
         </ScrollView>
 
