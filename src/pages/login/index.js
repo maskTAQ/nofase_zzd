@@ -15,8 +15,8 @@ export default class Login extends Component {
     navigation: PropTypes.object
   };
   state = {
-    phone: "13696526122",
-    code: "12",
+    phone: "",
+    code: "",
     isBgVisible: true,
     viewMarginTop: new Animated.Value(0),
   };
