@@ -23,16 +23,16 @@ export default class StoreBaseInfo extends Component {
     };
     state = {
         data: [
-            { label: '店铺全称', key: 'StoreName', value: '12' },
-            { label: '店铺号码', key: 'StoreTel', value: '12' },
-            { label: '单位类型', key: 'StoreType', value: '13' },
+            { label: '店铺全称', key: 'StoreName', value: '' },
+            { label: '店铺号码', key: 'StoreTel', value: '' },
+            { label: '单位类型', key: 'StoreType', value: '' },
             { type: 'line', key: '1' },
-            { label: '法人姓名', key: 'LegalName', value: '123' },
-            { label: '法人手机号', key: 'LegTel', value: '12qwqw3' },
-            { label: '法人身份证', key: 'LegCode', value: '123' },
+            { label: '法人姓名', key: 'LegalName', value: '' },
+            { label: '法人手机号', key: 'LegTel', value: '' },
+            { label: '法人身份证', key: 'LegCode', value: '' },
             { type: 'line', key: '2' },
-            { label: '业务员', key: 'SalesmanName', value: '123' },
-            { label: '合约编号', key: 'ContractCode', value: '13' },
+            { label: '业务员', key: 'SalesmanName', value: '' },
+            { label: '合约编号', key: 'ContractCode', value: '' },
         ]
     };
     changeValue = (i, v) => {

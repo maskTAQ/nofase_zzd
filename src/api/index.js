@@ -2,7 +2,7 @@ import { post } from "./base";
 
 export default {
   login({ Tel, ExCode }) {//http://101.200.196.202:8888/Admin/
-    return post("/Admin/AdminLoginTest", { Tel, ExCode });
+    return post("/Admin/AdminLogin", { Tel, ExCode });
   },
   register({ NickName, Tel, ExCode }) {
     return post("/User/UserReg", { NickName, Tel, ExCode });
@@ -18,7 +18,6 @@ export default {
   },
   //获取地区营业信息
   getStoreBusInfoByDate(params) {
-    console.log(params,"/Admin/GetStoreBusInfoByDate")
     return post("/Admin/GetStoreBusInfoByDate",params);
   },
   //新建店铺

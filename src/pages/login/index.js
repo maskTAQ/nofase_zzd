@@ -15,8 +15,8 @@ export default class Login extends Component {
     navigation: PropTypes.object
   };
   state = {
-    phone: "13696526122",
-    code: "536808",
+    phone: "",
+    code: "",
     isBgVisible: true,
     viewMarginTop: new Animated.Value(0),
   };
@@ -27,9 +27,9 @@ export default class Login extends Component {
   }
   login = () => {
     const { phone, code } = this.state;
-    // if (!this.codeRef.isGetCode) {
-    //   return Tip.fail("请先获取验证码");
-    // }
+    if (!this.codeRef.isGetCode) {
+      return Tip.fail("请先获取验证码");
+    }
     return api
       .login({ Tel: phone, ExCode: code })
       .then(res => {
