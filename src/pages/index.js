@@ -11,3 +11,5 @@ export {default as Map} from './map';
 export {default as BindBank} from './bind-bank';
 export {default as Introduce} from './introduce';
 export {default as ImgStore} from './img-store';
+export {default as StoreBaseInfo} from './store-base-info';
+export {default as StoreImgInfo} from './store-img-info';

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-//import {  Alert } from "react-native";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -7,10 +6,10 @@ import {baseURL} from 'src/config';
 import { WebView } from "src/components";
 
 @connect(state => {
-    const { newStoreInfo } = state;
-    return { newStoreInfo };
-  })
-export default class ImgStore extends Component {
+    const { newStoreInfo, auth: { AdminId } } = state;
+    return { newStoreInfo, AdminId };
+})
+export default class StoreImgInfo extends Component {
     static defaultProps = {
 
     };
@@ -32,7 +31,7 @@ export default class ImgStore extends Component {
         };
         return (
             <WebView
-                title="店铺涂料"
+                title="店铺认证信息"
                 url={`http://192.168.0.102:5500/index.html?params=${JSON.stringify(params)}`}
                 ref={w => (this.webview = w)}
 

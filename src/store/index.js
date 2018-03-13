@@ -3,7 +3,7 @@ import AppNavigator from "src/Navigation";
 import { CreateReduxField } from "src/common";
 
 const initialNav = AppNavigator.router.getStateForAction(
-  AppNavigator.router.getActionForPathAndParams("StoreAuth")
+  AppNavigator.router.getActionForPathAndParams("Login")
 );
 
 export default {
@@ -15,7 +15,8 @@ export default {
   },
   newStoreInfo:{
     main:null,
-    authentication:null,
+    base:null,
+    img:null,
     bank:null,
     map:null,
     hour:null,

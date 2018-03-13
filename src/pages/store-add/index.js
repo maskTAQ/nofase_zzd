@@ -60,111 +60,127 @@ export default class StoreAdd extends Component {
     navigation: PropTypes.object,
     newStoreInfo: PropTypes.object,
   };
-  state = {
-    activeLayerIndex: NaN,
-    topListData: [
-      {
-        label: "店铺认证信息",
-        value: "未认证",
-        key: 'authentication',
-        onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "StoreAuth" })
-          );
-        }
-      },
-      {
-        label: "银行卡认证信息",
-        value: "未认证",
-        key: 'bank',
-        onPress: () => {
-          const { authentication } = this.props.newStoreInfo;
-          if (authentication) {
+  constructor() {
+    super()
+    this.state = {
+      activeLayerIndex: NaN,
+      topListData: [
+        {
+          label: "店铺基本信息",
+          value: "未填写",
+          key: 'base',
+          onPress: () => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "StoreBaseInfo" })
+            );
+          }
+        },
+        {
+          label: "店铺图片数据上传",
+          value: "去上传",
+          key: 'img',
+          onPress: this.proxyPress(() => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "StoreImgInfo" })
+            );
+          })
+        },
+        {
+          label: "银行卡认证信息",
+          value: "未认证",
+          key: 'bank',
+          onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "BindBank" })
             );
-          } else {
-            Tip.fail('请先完成店铺认证');
+          })
+        },
+        {
+          label: "位置", key: 'map', value: "未选择", onPress: () => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "Map" })
+            );
           }
-
+        },
+        { label: "容纳人数", value: "45", key: 'PeopleNum', unit: '人' },
+        { label: "收费标准", value: "15", key: 'Charge', unit: '/小时' }
+      ],
+      bottomListData: [
+        {
+          label: "店铺图库", value: "未设置", key: 'ImgJson', onPress: () => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "ImgStore" })
+            );
+          }
+        },
+        {
+          label: "营业时间",
+          value: "未设置",
+          key: 'hour',
+          onPress: () => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "BusinessHours" })
+            );
+          }
+        },
+        {
+          label: "设备管理",
+          value: "未设置",
+          key: 'deviceManage',
+          onPress: () => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "DeviceManage" })
+            );
+          }
+        },
+        {
+          label: "课程表",
+          key: 'timetable',
+          value: "未设置",
+          onPress: () => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "Timetable" })
+            );
+          }
+        },
+        {
+          label: "商家介绍/留言", key: 'StoreRemarks', value: "未设置", onPress: () => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "Introduce" })
+            );
+          }
+        },
+        {
+          label: "客服电话",
+          key: 'CsTel',
+          value: "10477-5666666"
         }
-      },
-      {
-        label: "位置", key: 'map', value: "未选择", onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "Map" })
-          );
-        }
-      },
-      { label: "容纳人数", value: "45", key: 'PeopleNum', unit: '人' },
-      { label: "收费标准", value: "15", key: 'Charge', unit: '/小时' }
-    ],
-    bottomListData: [
-      {
-        label: "店铺图库", value: "未设置", key: 'ImgJson', onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "ImgStore" })
-          );
-        }
-      },
-      {
-        label: "营业时间",
-        value: "未设置",
-        key: 'hour',
-        onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "BusinessHours" })
-          );
-        }
-      },
-      {
-        label: "设备管理",
-        value: "未设置",
-        key: 'deviceManage',
-        onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "DeviceManage" })
-          );
-        }
-      },
-      {
-        label: "课程表",
-        key: 'timetable',
-        value: "未设置",
-        onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "Timetable" })
-          );
-        }
-      },
-      {
-        label: "商家介绍/留言", key: 'StoreRemarks', value: "未设置", onPress: () => {
-          this.props.navigation.dispatch(
-            action.navigate.go({ routeName: "Introduce" })
-          );
-        }
-      },
-      {
-        label: "客服电话",
-        key: 'CsTel',
-        value: "10477-5666666"
-      }
-    ]
-  };
+      ]
+    };
+  }
   componentWillReceiveProps(nextProps) {
-    const { hour, bank, deviceManage, authentication, map, timetable, StoreRemarks, ImgJson } = nextProps.newStoreInfo;
+    const { hour, bank, deviceManage, timetable, StoreRemarks, base } = nextProps.newStoreInfo;
 
-    this.setValueStatus('topListData', 'map', map);
-    this.setValueStatus('topListData', 'authentication', authentication);
+    this.setValueStatus('topListData', 'base', base);
     this.setValueStatus('topListData', 'bank', bank);
 
 
-    this.setValueStatus('bottomListData', 'ImgJson', ImgJson);
     this.setValueStatus('bottomListData', 'hour', hour);
     this.setValueStatus('bottomListData', 'deviceManage', deviceManage);
     this.setValueStatus('bottomListData', 'timetable', timetable);
     this.setValueStatus('bottomListData', 'StoreRemarks', StoreRemarks);
 
+  }
+  proxyPress = (press) => {
+    return () => {
+      const { StoreId } = this.props.newStoreInfo.base || {};
+      if (StoreId) {
+        press();
+      } else {
+        Tip.fail('请先录入店铺基本信息');
+      }
+
+    }
   }
   setValueStatus(dataName, key, value) {
     const data = Object.assign([], this.state[dataName]);
@@ -190,10 +206,17 @@ export default class StoreAdd extends Component {
     });
   }
   //更新店铺信息
-  saveStore = () => {
+  editStore = () => {
     const { topListData, bottomListData } = this.state;
-    const { authentication, hour, bank, deviceManage, map, timetable, StoreRemarks, ImgJson } = this.props.newStoreInfo;
+    const { base, hour, bank, deviceManage, timetable, StoreRemarks} = this.props.newStoreInfo;
     const data = [].concat(topListData, bottomListData);
+
+    if (!base) {
+      return Tip.fail('请先填写店铺基本信息');
+    }
+    if (!bank) {
+      return Tip.fail('请先认证银行卡信息');
+    }
 
     const result = {};
     data.forEach(item => {
@@ -203,24 +226,27 @@ export default class StoreAdd extends Component {
       }
     });
 
-    if (!authentication) {
-      return Tip.fail('请先认证店铺信息');
+
+    const params = {
+      StoreId: base.StoreId,
+      StoreRemarks,
+      CurrJson:timetable,
+      ...result,
+      ...hour,
+      ...deviceManage,
+      
     }
-    if (!bank) {
-      return Tip.fail('请先认证银行卡信息');
-    }
-    const params = { StoreId: authentication.StoreId, StoreRemarks, ImgJson, ...result, ...hour, ...bank, ...deviceManage, ...map, ...timetable }
 
 
 
-    api.addStore(params)
+    return api.editStore(params)
       .then(res => {
-        Tip.success('添加店铺成功');
-        setTimeout(()=>{
+        Tip.success('店铺数据录入成功');
+        setTimeout(() => {
           this.props.navigation.dispatch(
             action.navigate.go({ routeName: "Home" })
           );
-        },1500)
+        }, 1500)
       })
       .catch(e => {
         console.log(e)
@@ -275,7 +301,7 @@ export default class StoreAdd extends Component {
               {this.renderBottom()}
             </View>
             <View style={styles.buttonBox} >
-              <Button onPress={this.saveStore} style={styles.submit} textStyle={styles.submitText}>添加店铺</Button></View>
+              <Button onPress={this.editStore} style={styles.submit} textStyle={styles.submitText}>完善店铺信息</Button></View>
           </View>
         </ScrollView>
 

@@ -67,35 +67,24 @@ export default class Wv extends Component {
           </Page>
         );
       }else{
-        // return (
-        //   <Page title={title}>
-        //     <View style={{ flex: 1 }}>
-        //       <WebViewAndroid 
-        //       javaScriptEnabled={true}
-        //       url={url} style={{flex:1}} 
-        //       geolocationEnabled={false}
-        //   builtInZoomControls={false}
-        //       //injectedJavaScript={patchPostMessageJsCode}
-        //       injectedJavaScript={javascriptToInject()} 
-        //       onMessage={(e)=>{
-        //         console.log(e)
-        //       }}
-        //       {...others}/>
-        //     </View>
-        //   </Page>
-        // );
         return (
-          <WebViewAndroid
-          ref="webViewAndroidSample"
-          javaScriptEnabled={true}
-          geolocationEnabled={false}
+          <Page title={title}>
+            <View style={{ flex: 1 }}>
+              <WebViewAndroid 
+              javaScriptEnabled={true}
+              url={url} style={{flex:1}} 
+              geolocationEnabled={false}
           builtInZoomControls={false}
-          injectedJavaScript={this.javascriptToInject()}
-          onNavigationStateChange={this.onNavigationStateChange}
-          onMessageEvent={this.onMessage}
-          url={url} // or use the source(object) attribute...
-          style={{flex:1}} />
-        )
+              //injectedJavaScript={patchPostMessageJsCode}
+              injectedJavaScript={javascriptToInject()} 
+              onMessage={(e)=>{
+                console.log(e)
+              }}
+              {...others}/>
+            </View>
+          </Page>
+        );
+        
       }
     
   }

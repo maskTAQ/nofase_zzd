@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import action from "src/action";
+import {baseURL} from 'src/config';
 import { WebView } from "src/components";
 
 @connect(state => {
@@ -17,27 +17,25 @@ export default class Map extends Component {
     static propTypes = {
         navigation: PropTypes.object,
         newStoreInfo: PropTypes.object,
+        AdminId: PropTypes.number,
     };
     state = {
 
     };
     render() {
+        const { AdminId, newStoreInfo } = this.props;
+        const { StoreId } = newStoreInfo.base;
+        const params = {
+            AdminId,
+            StoreId,
+            url:`${baseURL}/Store/EditStore`
+        };
         return (
             <WebView
-                title="选择位置"
-                source={require('./html/index.html')}
+                title="店铺认证信息"
+                url={`http://192.168.0.102:5500/index.html?params=${JSON.stringify(params)}`}
                 ref={w => (this.webview = w)}
-                onMessage={e => {
-                    const data = JSON.parse(e.nativeEvent.data);
-                    this.props.navigation.dispatch(
-                        action.editStoreInfo({
-                            map:data
-                        })
-                      )
-                      return this.props.navigation.dispatch(
-                        action.navigate.back()
-                      );
-                }}
+
             />
         )
     }

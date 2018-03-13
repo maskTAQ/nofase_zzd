@@ -82,7 +82,7 @@ export default {
   tagWrapper: {
     position: "absolute",
     top: 4,
-    left: 4,
+    left: 24,
     paddingLeft: 4,
     paddingRight: 4,
     backgroundColor: "#f3842f"

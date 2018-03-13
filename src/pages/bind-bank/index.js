@@ -36,7 +36,7 @@ export default class BindBank extends Component {
     isPickerVisible: false
   };
   componentWillMount() {
-    const { LegalName, LegCode, LegTel } = this.props.newStoreInfo.authentication;
+    const { LegalName, LegCode, LegTel } = this.props.newStoreInfo.base;
     this.handleValueChange('LegalName', LegalName);
     this.handleValueChange('LegCode', LegCode);
     this.handleValueChange('LegTel', LegTel);
@@ -72,7 +72,7 @@ export default class BindBank extends Component {
     if(!BankName || !CardNo){
       Tip.fail('请完整填写信息');
     }else{
-      const { StoreId } = this.props.newStoreInfo.authentication;
+      const { StoreId } = this.props.newStoreInfo.base;
       api.bindBank({ StoreId, BankName, CardNo })
         .then(res => {
           this.props.navigation.dispatch(

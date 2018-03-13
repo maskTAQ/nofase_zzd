@@ -25,6 +25,10 @@ export default {
   addStore(params){
     return post("/Store/SaveStore",params);
   },
+  //编辑店铺
+  editStore(params){
+    return post("/Store/EditStore",params);
+  },
   //绑定银行卡
   bindBank({StoreId,BankName,CardNo}){
     return post("/Store/BindBank",{StoreId,BankName,CardNo});
