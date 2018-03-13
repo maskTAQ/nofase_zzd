@@ -96,22 +96,22 @@ export default class StoreAdd extends Component {
           })
         },
         {
-          label: "位置", key: 'map', value: "未选择", onPress: () => {
+          label: "位置", key: 'map', value: "未选择", onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "Map" })
             );
-          }
+          })
         },
         { label: "容纳人数", value: "45", key: 'PeopleNum', unit: '人' },
         { label: "收费标准", value: "15", key: 'Charge', unit: '/小时' }
       ],
       bottomListData: [
         {
-          label: "店铺图库", value: "未设置", key: 'ImgJson', onPress: () => {
+          label: "店铺图库", value: "未设置", key: 'ImgJson', onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "ImgStore" })
             );
-          }
+          })
         },
         {
           label: "营业时间",

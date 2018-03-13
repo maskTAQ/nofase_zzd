@@ -15,8 +15,8 @@ export default class Login extends Component {
     navigation: PropTypes.object
   };
   state = {
-    phone: "",
-    code: "",
+    phone: "13696526122",
+    code: "12",
     isBgVisible: true,
     viewMarginTop: new Animated.Value(0),
   };
@@ -27,12 +27,13 @@ export default class Login extends Component {
   }
   login = () => {
     const { phone, code } = this.state;
-    if (!this.codeRef.isGetCode) {
-      return Tip.fail("请先获取验证码");
-    }
+    // if (!this.codeRef.isGetCode) {
+    //   return Tip.fail("请先获取验证码");
+    // }
     return api
       .login({ Tel: phone, ExCode: code })
       .then(res => {
+        console.log(res,11);
         this.props.navigation.dispatch(
           action.login(res)
         );
@@ -41,6 +42,7 @@ export default class Login extends Component {
         );
       })
       .catch(e => {
+console.log(e,111212)
         Tip.fail(e);
       });
   };
@@ -75,16 +77,16 @@ export default class Login extends Component {
               style={styles.formItemInput}
               placeholder="手机号"
               placeholderTextColor="#fff"
-              onFocus={() => {
-                this.setState({
-                  isBgVisible: false
-                })
-              }}
-              onBlur={() => {
-                this.setState({
-                  isBgVisible: true
-                })
-              }}
+              // onFocus={() => {
+              //   this.setState({
+              //     isBgVisible: false
+              //   })
+              // }}
+              // onBlur={() => {
+              //   this.setState({
+              //     isBgVisible: true
+              //   })
+              // }}
             />
           </View>
           <View style={styles.formItem}>
@@ -99,16 +101,16 @@ export default class Login extends Component {
               }}
               style={styles.formItemInput}
               placeholder="密码"
-              onFocus={() => {
-                this.setState({
-                  isBgVisible: false
-                })
-              }}
-              onBlur={() => {
-                this.setState({
-                  isBgVisible: true
-                })
-              }}
+              // onFocus={() => {
+              //   this.setState({
+              //     isBgVisible: false
+              //   })
+              // }}
+              // onBlur={() => {
+              //   this.setState({
+              //     isBgVisible: true
+              //   })
+              // }}
               placeholderTextColor="#fff"
             />
             <CodeButton ref={e => (this.codeRef = e)} phone={phone}>
@@ -130,27 +132,7 @@ export default class Login extends Component {
           </View>
         </View>
 
-        {
-          isBgVisible && (
-            <Image
-              source={require("src/images/login/bg.png")}
-              style={styles.bg}
-              resizeMode="stretch"
-            />)
-        }
-        {
-          isBgVisible && (
-            <View style={styles.relevancechar}>
-              <Text style={styles.relevanceText}>关联登录</Text>
-              <Button textStyle={styles.registerText}>
-                <Image
-                  source={require("src/images/login/wechat.png")}
-                  style={styles.charImg}
-                />
-              </Button>
-            </View>)
-        }
-
+        
         <ShareModal
           isVisible={false}
           username="上都牧人"
