@@ -50,7 +50,7 @@
     map.centerAndZoom(point, 12);
     var geolocation = new BMap.Geolocation();
     var dqlng, dqlat;
-   
+
     geolocation.getCurrentPosition(function (r) {
         if (this.getStatus() == BMAP_STATUS_SUCCESS) {
             var mk = new BMap.Marker(r.point);
@@ -64,38 +64,66 @@
             alert('failed' + this.getStatus());
         }
     });
-    var lng, lat,mapip;
+    var lng, lat, mapip;
     map.addEventListener("click", function (e) {
         map.clearOverlays();
-        console.log(e.point.lng + ", " + e.point.lat);
         var point = new BMap.Point(e.point.lng, e.point.lat);
         var marker = new BMap.Marker(point);        // 创建标注    
         map.addOverlay(marker);
         var pt = e.point;
-        var geoc = new BMap.Geocoder();    
-		geoc.getLocation(pt, function(rs){
+        var geoc = new BMap.Geocoder();
+        geoc.getLocation(pt, function (rs) {
             var addComp = rs.addressComponents;
-              mapip =addComp.province + " " + addComp.city + "" + addComp.district + "" + addComp.street + "" + addComp.streetNumber;
-			
-		});  
+            mapip = addComp.province + " " + addComp.city + "" + addComp.district + "" + addComp.street + "" + addComp.streetNumber;
+
+        });
         lng = e.point.lng;
         lat = e.point.lat
-        
+
     });
-  
+
+    function GetRequest() {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+            }
+        }
+        return theRequest;
+    };
+    var p = GetRequest();
+    var params = JSON.parse(p.params || '{}');
+
     $(".save").click(function () {
-       
+
         if (lng == undefined || lat == undefined) {
             return alert("请选择所在位置")
-            
+
         }
         else {
             var data = {
                 Lng: lng,
                 Lat: lat,
-                Address:mapip
+                Address: mapip
             }
         }
+        $.ajax({
+                url: params.url,
+                type: 'post',
+                dataType: 'json',
+                data: Object.assign(data, { AdminId: params.AdminId, StoreId: params.StoreId }),
+                success: function (res) {
+                    console.log(res);
+                    alert('上传成功');
+                },
+                error: function (e) {
+                    console.log(e);
+                    alert('上传失败');
+                }
+            })
         window.postMessage(JSON.stringify(data));
     });
 

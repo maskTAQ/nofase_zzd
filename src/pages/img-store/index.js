@@ -32,8 +32,8 @@ export default class ImgStore extends Component {
         };
         return (
             <WebView
-                title="店铺涂料"
-                url={`http://192.168.0.102:5500/index.html?params=${JSON.stringify(params)}`}
+                title="店铺图库"
+                url={`http://101.200.196.202:8888/html/html/html/img-store/html/index.html?params=${JSON.stringify(params)}`}
                 ref={w => (this.webview = w)}
 
             />

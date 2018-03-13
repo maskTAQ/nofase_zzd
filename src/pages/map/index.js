@@ -32,8 +32,8 @@ export default class Map extends Component {
         };
         return (
             <WebView
-                title="店铺认证信息"
-                url={`http://192.168.0.102:5500/index.html?params=${JSON.stringify(params)}`}
+                title="选择位置"
+                url={`http://101.200.196.202:8888/html/html/html/map.html?params=${JSON.stringify(params)}`}
                 ref={w => (this.webview = w)}
 
             />
