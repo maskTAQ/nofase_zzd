@@ -53,7 +53,7 @@ console.log(e,111212)
   };
   
   render() {
-    const { phone, code, isBgVisible } = this.state;
+    const { phone, code } = this.state;
     return (
       <Animated.View style={[styles.container, { marginBottom: this.state.viewMarginTop }]}>
         <View style={styles.logo}>
@@ -125,11 +125,7 @@ console.log(e,111212)
           >
             立即登录
           </Button>
-          <View style={styles.register}>
-            <Button onPress={this.register} textStyle={styles.registerText}>
-              注册账号
-            </Button>
-          </View>
+          
         </View>
 
         
