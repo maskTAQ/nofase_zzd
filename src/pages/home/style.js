@@ -103,9 +103,14 @@ export default {
     justifyContent: "space-between"
   },
   itemName: {
+    flex:1,
     fontSize: 15,
     fontWeight: "bold",
     color: "#666"
+  },
+  itemButtonGroup:{
+    flexDirection:'row',
+    width:60,
   },
   editButton: {
     marginLeft: 4,
@@ -124,5 +129,9 @@ export default {
     flex: 1,
     fontSize: 14,
     color: "#999"
+  },
+  noData:{
+    paddingLeft:15,
+    color:'#333',
   }
 };

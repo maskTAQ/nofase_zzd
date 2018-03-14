@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { View, FlatList, Text, ScrollView } from "react-native";
+import { View, FlatList, Text, ScrollView, TouchableOpacity,Alert as AlertModal } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { Page, Button, Alert, Input } from "src/components";
+import { Page, Button, Alert, Input, Icon } from "src/components";
 import action from "src/action";
 import { Tip } from 'src/common';
 import api from 'src/api';
@@ -51,14 +51,16 @@ Layer.propTypes = {
   data: PropTypes.object,
   close: PropTypes.func
 };
-@connect(({ newStoreInfo, auth }) => {
-  return { newStoreInfo, auth }
+@connect(({ newStoreInfo, auth: { AdminId } }) => {
+  return { newStoreInfo, AdminId }
 })
 export default class StoreAdd extends Component {
   static defaultProps = {};
   static propTypes = {
     navigation: PropTypes.object,
     newStoreInfo: PropTypes.object,
+    AdminId: PropTypes.number,
+    dispatch:PropTypes.func
   };
   constructor() {
     super()
@@ -158,10 +160,18 @@ export default class StoreAdd extends Component {
       ]
     };
   }
+
+  componentWillMount() {
+    const { StoreId } = this.props.navigation.state.params;
+    if (StoreId || StoreId === 0) {
+      this.getStoreInitData(StoreId);
+    }
+
+  }
+
   componentWillReceiveProps(nextProps) {
     const { hour, bank, deviceManage, timetable, StoreRemarks, base } = nextProps.newStoreInfo;
 
-    console.log(nextProps.newStoreInfo)
     this.setValueStatus('topListData', 'base', base);
     this.setValueStatus('topListData', 'bank', bank);
 
@@ -171,6 +181,52 @@ export default class StoreAdd extends Component {
     this.setValueStatus('bottomListData', 'timetable', timetable);
     this.setValueStatus('bottomListData', 'StoreRemarks', StoreRemarks);
 
+  }
+
+  getStoreInitData(StoreId) {
+    const { AdminId } = this.props;
+    Tip.loading('初始化店铺数据中');
+    api.getStoreInfo({ StoreId, AdminId })
+      .then(res => {
+        const { StoreRemarks, Id, StoreName, StoreTel, StoreType,
+          LegalName,
+          LegTel,
+          LegCode,
+          SalesmanName,
+          ContractCode, } = res;
+        console.log(res)
+        const result = {
+          base: {
+            StoreId: Id,
+            StoreName,
+            StoreTel,
+            StoreType,
+            LegalName,
+            LegTel,
+            LegCode,
+            SalesmanName,
+            ContractCode,
+          },
+          bank: {
+
+          },
+          hour: {
+
+          },
+          deviceManage: {},
+          timetable: [],
+          StoreRemarks
+        };
+        this.props.navigation.dispatch(
+          action.editStoreInfo({
+            ...result
+          })
+        )
+      })
+      .catch(e => {
+        console.log(e)
+        Tip.fail('初始化店铺数据失败');
+      })
   }
   proxyPress = (press) => {
     return () => {
@@ -298,9 +354,35 @@ export default class StoreAdd extends Component {
     );
   }
   render() {
-
+    const { StoreId } = this.props.navigation.state.params;
+    const title = StoreId ? '编辑店铺' : '添加店铺';
     return (
-      <Page title="店铺添加">
+      <Page title={title} LeftComponent={(
+        <TouchableOpacity onPress={() => {
+          const { StoreId } = this.props.navigation.state.params;
+          const { base } = this.props.newStoreInfo;
+          if (!StoreId && base.StoreId) {
+            AlertModal.alert(
+              '提示',
+              '返回将会失去没保存的店铺信息哦!',
+              [
+                { text: '取消', onPress: () => { } },
+                {
+                  text: '返回', onPress: () => {
+                    this.props.dispatch(action.navigate.back());
+                  }, style: 'cancel'
+                }
+              ],
+              { cancelable: false }
+            )
+          }else{
+            this.props.dispatch(action.navigate.back());
+          }
+
+        }}>
+          <Icon size={20} source={require("./img/return.png")} />
+        </TouchableOpacity>
+      )}>
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.content}>

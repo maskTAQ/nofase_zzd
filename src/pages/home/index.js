@@ -1,16 +1,19 @@
 import React, { Component } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Linking } from "react-native";
 import moment from "moment";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
+import { Tip } from 'src/common';
+import api from 'src/api';
 import action from "src/action";
 import { EventHub } from "src/common";
 import { Header, Button, Icon, Input, Picker } from "src/components";
 import styles from "./style";
 
+
 @connect(state => {
-  const { adminAddressList, adminAddressInfo,storeBusInfoByDate } = state;
+  const { adminAddressList, adminAddressInfo, storeBusInfoByDate } = state;
   return { adminAddressList, adminAddressInfo, storeBusInfoByDate };
 })
 export default class Home extends Component {
@@ -20,27 +23,54 @@ export default class Home extends Component {
   };
   state = {
     activeAddrIndex: 0,
-    isPickerVisible: false
+    isPickerVisible: false,
+    data: [],
+    searchValue:'',
+    refreshing:false
   };
 
   componentWillMount() {
 
     // EventHub.emit("dispatch", "getAdminAddressList", "adminAddressList");
     // EventHub.emit("dispatch", "getAdminAddressInfo", "adminAddressInfo");
-   //this.getStoreBusInfoByDate();
-
+    //this.getStoreBusInfoByDate();
+    this.getData(true);
+  }
+  getData(isLoading) {
+    // console.log(isLoading)
+    // if(isLoading){
+    //   Tip.loading('加载店铺中...');
+    // }
+    return this.props.dispatch(
+      {
+        type: 'STORELIST',
+        api: () => {
+          return api.getStoreList(isLoading)
+        },
+        promise: true
+      }
+    )
+      .then(data => {
+        this.setState({
+          data
+        })
+      })
+      .catch(e => {
+        Tip.loading('加载店铺失败');
+        console.log('e:reject', e);
+      })
   }
   storeAddrList = [
     { label: '广东省-深圳市-南山区', value: '0' },
     { label: '广东省-深圳市-罗湖区', value: '1' },
     { label: '广东省-深圳市-大鹏新区', value: '2' }
   ];
-  getStoreBusInfoByDate(){
+  getStoreBusInfoByDate() {
     const { activeAddrIndex } = this.state;
     EventHub.emit("dispatch", "getStoreBusInfoByDate", "storeBusInfoByDate", {
-      Address:this.storeAddrList[activeAddrIndex].label.replace(/-/g,''),
-      SDate:moment().format("YYYY-MM-DD 00:00"),
-      EDates:moment().format("YYYY-MM-DD 23:59"),
+      Address: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
+      SDate: moment().format("YYYY-MM-DD 00:00"),
+      EDates: moment().format("YYYY-MM-DD 23:59"),
     });
   }
   onAddrChange = (value) => {
@@ -49,7 +79,13 @@ export default class Home extends Component {
       isPickerVisible: false
     })
   }
-
+  onRefresh=()=>{
+    this.setState({refreshing:true});
+    this.getData(false)
+    .then(res=>{
+      this.setState({refreshing:false});
+    })
+  }
   renderHeader() {
     const { activeAddrIndex } = this.state;
     return (
@@ -57,14 +93,14 @@ export default class Home extends Component {
         <Header
           style={{ backgroundColor: styles.header.backgroundColor }}
           LeftComponent={
-            <Button onPress={()=>{
+            <Button onPress={() => {
               this.props.navigation.dispatch(
                 action.navigate.go({ routeName: "SubAdmin" })
               );
             }} textStyle={{ fontWeight: "bold" }}>分站端</Button>
           }
           RightComponent={
-            <Button onPress={()=>{
+            <Button onPress={() => {
               this.props.navigation.dispatch(
                 action.navigate.go({ routeName: "StoreAdd" })
               );
@@ -94,10 +130,13 @@ export default class Home extends Component {
     );
   }
   renderSearch() {
+    const {searchValue} = this.state;
     return (
       <View style={styles.search}>
         <View style={styles.searchBox}>
           <Input
+            value={searchValue}
+            onChangeText={v=>this.setState({searchValue:v})}
             placeholder="店铺名称/手机号码搜索"
             style={styles.searchInput}
           />
@@ -110,19 +149,30 @@ export default class Home extends Component {
     );
   }
   renderItem(row) {
-    const { icon, name, addr } = row;
+    const { Amont, StoreName, Location, StoreTel, StoreId } = row;
+    const icon = require("./img/u42.png");
     return (
       <View style={styles.item}>
         <View style={styles.itemBox}>
           <Icon size={82} source={icon} />
           <View style={styles.itemDetail}>
             <View style={styles.itemDetaiTop}>
-              <Text style={styles.itemName}>{name}</Text>
-              <View style={{ flexDirection: "row" }}>
-                <Button>
+              <Text style={styles.itemName} numberOfLines={2}>{StoreName}</Text>
+              <View style={styles.itemButtonGroup}>
+                <Button onPress={() => {
+                  Linking.openURL(`tel:${StoreTel}`)
+                    .then(supported => {
+                      console.log(supported);
+                    })
+                }}>
                   <Icon size={26} source={require("./img/u204.png")} />
                 </Button>
                 <Button
+                  onPress={() => {
+                    this.props.navigation.dispatch(
+                      action.navigate.go({ routeName: "StoreAdd",params:{StoreId} })
+                    );
+                  }}
                   style={styles.editButton}
                   textStyle={styles.editButtonText}
                 >
@@ -131,71 +181,34 @@ export default class Home extends Component {
               </View>
             </View>
             <Text style={styles.itemAddr} numberOfLines={2}>
-              {addr}
+              {Location}
             </Text>
           </View>
         </View>
         <View style={styles.tagWrapper}>
-          <Text style={styles.tagText}>20人</Text>
+          <Text style={styles.tagText}>{Amont}人</Text>
         </View>
       </View>
     );
   }
   renderList() {
-    const data = [
-      {
-        icon: require("./img/u42.png"),
-        name: "优思健身工作室(前海店)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u42.png"),
-        name: "优思健身工作室(前海店1)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u42.png"),
-        name: "优思健身工作室(前海店2)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u42.png"),
-        name: "优思健身工作室(前海店3)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u42.png"),
-        name: "优思健身工作室(前海店4)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      }
-    ];
+    const { data,refreshing } = this.state;
+    const {searchValue} = this.state;
     return (
       <View style={styles.list}>
         <FlatList
-          data={data}
-          ListEmptyComponent={<Text>暂时没有数据哦</Text>}
+          data={data.filter(item=>{
+            if(!searchValue){
+              return true
+            }
+            const {StoreName,StoreTel} = item;
+            return StoreName.includes(item) || StoreTel.includes(item);
+          })}
+          onRefresh={this.onRefresh}
+          refreshing={refreshing}
+          ListEmptyComponent={<Text style={styles.noData}>暂时没有数据哦!</Text>}
           renderItem={({ item }) => this.renderItem(item)}
-          keyExtractor={item => item.name}
+          keyExtractor={item => item.StoreId + item.StoreName}
         />
       </View>
     );
