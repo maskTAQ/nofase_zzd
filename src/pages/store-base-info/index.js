@@ -122,7 +122,7 @@ export default class StoreBaseInfo extends Component {
                                         <Text style={styles.itemLabelText}>{label}:</Text>
                                     </View>
                                     <View style={styles.itemValue}>
-                                        <Input onChangeText={v => this.changeValue(i, v)} style={styles.input} value={value} />
+                                        <Input onChangeText={v => this.changeValue(i, v)} style={styles.input} value={String(value)} />
                                     </View>
                                 </View>
                             )

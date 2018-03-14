@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, FlatList, Text, ScrollView, TouchableOpacity,Alert as AlertModal } from "react-native";
+import { View, FlatList, Text, ScrollView, TouchableOpacity, Alert as AlertModal } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -60,7 +60,7 @@ export default class StoreAdd extends Component {
     navigation: PropTypes.object,
     newStoreInfo: PropTypes.object,
     AdminId: PropTypes.number,
-    dispatch:PropTypes.func
+    dispatch: PropTypes.func
   };
   constructor() {
     super()
@@ -193,8 +193,10 @@ export default class StoreAdd extends Component {
           LegTel,
           LegCode,
           SalesmanName,
-          ContractCode, } = res;
-        console.log(res)
+          ContractCode, BusinessWeeks,
+          BusinessTimes,
+          Flag, PeopleNum, Charge, CsTel } = res;
+
         const result = {
           base: {
             StoreId: Id,
@@ -206,17 +208,30 @@ export default class StoreAdd extends Component {
             LegCode,
             SalesmanName,
             ContractCode,
+
           },
           bank: {
 
           },
           hour: {
-
+            BusinessWeeks,
+            BusinessTimes,
+            Flag
           },
           deviceManage: {},
           timetable: [],
           StoreRemarks
         };
+
+        const nextTopListData = Object.assign([], this.state.topListData),
+          nextBottomListData = Object.assign([], this.state.bottomListData);
+        nextTopListData[4].value = String(PeopleNum);
+        nextTopListData[5].value = String(Charge);
+        nextBottomListData[5].value = String(CsTel);
+        this.setState({
+          topListData: nextTopListData,
+          bottomListData: nextBottomListData
+        })
         this.props.navigation.dispatch(
           action.editStoreInfo({
             ...result
@@ -369,13 +384,23 @@ export default class StoreAdd extends Component {
                 { text: '取消', onPress: () => { } },
                 {
                   text: '返回', onPress: () => {
+                    this.props.navigation.dispatch(
+                      action.editStoreInfo({
+                        base: {},
+                        bank: {},
+                        hour: {},
+                        deviceManage: {},
+                        timetable: [],
+                        StoreRemarks: ''
+                      })
+                    )
                     this.props.dispatch(action.navigate.back());
                   }, style: 'cancel'
                 }
               ],
               { cancelable: false }
             )
-          }else{
+          } else {
             this.props.dispatch(action.navigate.back());
           }
 

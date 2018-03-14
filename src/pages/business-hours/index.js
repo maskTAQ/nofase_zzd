@@ -65,21 +65,21 @@ export default class BusinessHours extends Component {
     startTimeData: null,
     endTime: "请选择结束时间",
     endTimeData: null,
-    isClose: 1 //1营业 2未营业
+    Flag: 1 //1营业 2未营业
   };
   componentWillMount() {
-    const { isClose,  Times } = this.props.newStoreInfo.hour;
+    const { Flag,  BusinessTimes } = this.props.newStoreInfo.hour;
     //const weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    if (isClose) {
-      const time = Times.split('-');
+    if (Flag) {
+      const time = BusinessTimes.split('-');
       this.setState({
-        isClose,
+        Flag,
         startTime: time[0],
         endTime: time[0]
       })
     }
 
-    //console.log(Weeks)
+    //console.log(BusinessWeeks)
   }
   componentWillReceiveProps(nextProps) {
     const { hour } = nextProps.newStoreInfo;
@@ -130,7 +130,7 @@ export default class BusinessHours extends Component {
   }
   isCloseChange = v => {
     this.setState({
-      isClose: v ? 1 : 2
+      Flag: v ? 1 : 2
     });
   };
   computWeekRangeStr() {
@@ -140,15 +140,15 @@ export default class BusinessHours extends Component {
     const a = new Array(l);
 
     a.fill(0);
-    const Weeks = a
+    const BusinessWeeks = a
       .map(item => {
         return startWeekValue++;
       })
       .join(",");
-    return Weeks;
+    return BusinessWeeks;
   }
   save = () => {
-    const { isClose, startTime, endTime } = this.state;
+    const { Flag, startTime, endTime } = this.state;
     //let {startWeekValue,endWeekValue} = this.state;
     const isHasInitTime = startTime.includes(":") && endTime.includes(":");
 
@@ -159,9 +159,9 @@ export default class BusinessHours extends Component {
       this.props.navigation.dispatch(
         action.editStoreInfo({
           hour: {
-            Weeks: this.computWeekRangeStr(),
-            Times: startTime + "-" + endTime,
-            isClose
+            BusinessWeeks: this.computWeekRangeStr(),
+            BusinessTimes: startTime + "-" + endTime,
+            Flag
           }
         })
       )
@@ -172,11 +172,11 @@ export default class BusinessHours extends Component {
 
   };
   renderHeader() {
-    const { isClose } = this.state;
+    const { Flag } = this.state;
     return (
       <View style={styles.header}>
         <Text style={styles.headerLabel}>店铺营业状态</Text>
-        <Switch value={isClose === 1} onValueChange={this.isCloseChange} />
+        <Switch value={Flag === 1} onValueChange={this.isCloseChange} />
       </View>
     );
   }
