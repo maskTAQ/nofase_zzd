@@ -5,15 +5,16 @@ import nav from "./nav";
 import { CreateReduxField } from "src/common";
 
 const appReducer = combineReducers({
-  auth:(state={}, action) => {
+  auth: (state = {}, action) => {
     const { type, payload } = action;
     if (type === actionMap.LOGIN) {
-      return { ...state, isLogin: true,...payload};
+      return { ...state, isLogin: true, ...payload };
     }
     return state;
   },
   nav: nav,
-  newStoreInfo: (state={}, action) => {
+  newStoreInfo: (state = {}, action) => {
+    console.log('newStoreInfo:', action)
     const { type, payload } = action;
     if (type === actionMap.EDIT_STORE_INFO) {
       return { ...state, ...payload }

@@ -13,3 +13,4 @@ export {default as Introduce} from './introduce';
 export {default as ImgStore} from './img-store';
 export {default as StoreBaseInfo} from './store-base-info';
 export {default as StoreImgInfo} from './store-img-info';
+export {default as P} from './p';

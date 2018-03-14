@@ -8,12 +8,12 @@ import React, { Component } from 'react';
 import { BackHandler, Platform, ToastAndroid, View, NativeModules } from "react-native";
 import { Provider, connect } from "react-redux";
 import { addNavigationHelpers } from "react-navigation";
-import { createStore } from 'redux';
+
 import PropTypes from 'prop-types';
 
 import Navigation from "src/Navigation";
-import AppReducer from 'src/reducers';
-import initStore from 'src/store';
+
+import store from 'src/store';
 import { Tip } from 'src/components';
 import action from "src/action";
 import api from "src/api";
@@ -88,10 +88,10 @@ const mapStateToProps = (state) => {
 const AppWithNavigationState = connect(mapStateToProps)(App);
 
 export default class Root extends Component {
-  store = createStore(AppReducer, initStore);
+  state={};
   render() {
     return (
-      <Provider store={this.store}>
+      <Provider store={store}>
         <View style={{ flex: 1 }}>
           <AppWithNavigationState />
           <Tip />

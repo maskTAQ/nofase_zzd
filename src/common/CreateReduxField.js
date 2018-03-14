@@ -3,9 +3,9 @@ export default function CreateReduxField() {
     "adminAddressList",
     'adminAddressInfo',
     'storeBusInfoByDate',
-    
   ];
   return {
+    keys,
     action(key, status, data) {
       return {
         type: key,

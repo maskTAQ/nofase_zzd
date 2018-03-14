@@ -4,7 +4,7 @@ import {
   Home, Login, HistoryConsume, StoreAdd,SubAdmin ,
   BusinessHours,DeviceManage,Timetable,StoreAuth,
   Map,BindBank,Introduce,ImgStore,StoreBaseInfo,
-  StoreImgInfo} from "src/pages";
+  StoreImgInfo,P} from "src/pages";
 
 export const RouteConfigs = {
   Login: {
@@ -51,6 +51,9 @@ export const RouteConfigs = {
   },
   StoreImgInfo:{
     screen:StoreImgInfo
+  },
+  P:{
+    screen:P
   }
 };
 
