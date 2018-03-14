@@ -239,7 +239,7 @@ export default class StoreAdd extends Component {
 
 
 
-    return api.editStore(params)
+    return api.updateStore(params)
       .then(res => {
         Tip.success('店铺数据录入成功');
         setTimeout(() => {

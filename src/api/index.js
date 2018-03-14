@@ -18,18 +18,24 @@ export default {
   },
   //获取地区营业信息
   getStoreBusInfoByDate(params) {
-    return post("/Admin/GetStoreBusInfoByDate",params);
+    return post("/Admin/GetStoreBusInfoByDate", params);
   },
   //新建店铺
-  addStore(params){
-    return post("/Store/SaveStore",params);
+  addStore(params) {
+    return post("/Store/SaveStore", params);
   },
   //编辑店铺
-  editStore(params){
-    return post("/Store/EditStore",params);
+  editStore(params) {
+    return post("/Store/EditStore", params);
+  },
+  //更新店铺
+  updateStore(params) {
+    const { StoreId } = params;
+    const url = StoreId ? '/Store/EditStore' : 'Store/SaveStore';
+    return post(url, params);
   },
   //绑定银行卡
-  bindBank({StoreId,BankName,CardNo}){
-    return post("/Store/BindBank",{StoreId,BankName,CardNo});
+  bindBank({ StoreId, BankName, CardNo }) {
+    return post("/Store/BindBank", { StoreId, BankName, CardNo });
   }
 };

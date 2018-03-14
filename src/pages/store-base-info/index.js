@@ -9,8 +9,8 @@ import { Page, Input, Button } from "src/components";
 import styles from "./style";
 
 @connect(state => {
-    const { newStoreInfo,auth:{AdminId} } = state;
-    return { newStoreInfo,AdminId };
+    const { newStoreInfo, auth: { AdminId } } = state;
+    return { newStoreInfo, AdminId };
 })
 export default class StoreBaseInfo extends Component {
     static defaultProps = {
@@ -19,7 +19,7 @@ export default class StoreBaseInfo extends Component {
     static propTypes = {
         navigation: PropTypes.object,
         newStoreInfo: PropTypes.object,
-        AdminId:PropTypes.number
+        AdminId: PropTypes.number
     };
     state = {
         data: [
@@ -35,6 +35,9 @@ export default class StoreBaseInfo extends Component {
             { label: '合约编号', key: 'ContractCode', value: '' },
         ]
     };
+    componentWillMount() {
+        this.loadInitValue();
+    }
     changeValue = (i, v) => {
         const data = Object.assign([], this.state.data);
         data[i].value = v;
@@ -42,41 +45,63 @@ export default class StoreBaseInfo extends Component {
             data
         });
     }
-    getParams=()=>{
-        const {data} = this.state;
-        const {AdminId} = this.props;
+    loadInitValue() {
+        const { base } = this.props.newStoreInfo;
+        const nextData = Object.assign([], this.state.data);
+        for (const item in base) {
+            for (let i = 0; i < nextData.length; i++) {
+                if (nextData[i].key === item) {
+                    nextData.value = base[item];
+
+                }
+            }
+        }
+        this.setState({
+            data: nextData
+        });
+    }
+    getParams = () => {
+        const { data } = this.state;
+        const { AdminId, newStoreInfo } = this.props;
+        const { StoreId } = newStoreInfo.base;
+
         const result = {
-            SalesmanId:AdminId
+            SalesmanId: AdminId
         };
-        data.forEach(item=>{
-            const {type,key,value} = item;
-            if(type!=='line'){
+        if (StoreId) {
+            result.StoreId = StoreId
+        }
+        data.forEach(item => {
+            const { type, key, value } = item;
+            if (type !== 'line') {
                 result[key] = value;
             }
-            
+
         });
         return result;
     }
     add = () => {
-        api.addStore(this.getParams())
-        .then(res=>{
-            this.props.navigation.dispatch(
-                action.editStoreInfo({
-                    base:{
-                        StoreId:res.StoreId,
-                        ...this.getParams()
-                    }
-                })
-            )
-            return this.props.navigation.dispatch(
-                action.navigate.back()
-            );
-        })
-        
-        
+        api.updateStore(this.getParams())
+            .then(res => {
+                this.props.navigation.dispatch(
+                    action.editStoreInfo({
+                        base: {
+                            StoreId: res.StoreId,
+                            ...this.getParams()
+                        }
+                    })
+                )
+                return this.props.navigation.dispatch(
+                    action.navigate.back()
+                );
+            })
+
+
     }
     render() {
         const { data } = this.state;
+        const { StoreId } = this.props.newStoreInfo.base;
+        const buttonLabel = StoreId ? '创建店铺' : '编辑店铺';
         return (
             <Page title="店铺基本信息">
                 <View style={styles.container}>
@@ -102,7 +127,7 @@ export default class StoreBaseInfo extends Component {
                             )
                         })
                     }
-                    <Button onPress={this.add} style={styles.button}>创建店铺</Button>
+                    <Button onPress={this.add} style={styles.button}>{buttonLabel}</Button>
                 </View>
             </Page>
         )

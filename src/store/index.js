@@ -14,15 +14,11 @@ export default {
     AdminLevel:''
   },
   newStoreInfo:{
-    main:null,
-    base:null,
-    img:null,
-    bank:null,
-    map:null,
-    hour:null,
-    deviceAdmin:null,
-    timetable:null,
-    ImgJson:null,//商家图库
+    base:{},
+    bank:{},
+    hour:{},
+    deviceAdmin:{},
+    timetable:[],
     StoreRemarks:''
   },
   ...CreateReduxField().store()
