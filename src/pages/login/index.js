@@ -16,7 +16,7 @@ export default class Login extends Component {
   };
   state = {
     phone: "",
-    code: "test",
+    code: "",
     isBgVisible: true,
     viewMarginTop: new Animated.Value(0),
   };

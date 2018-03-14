@@ -2,7 +2,7 @@ import { post } from "./base";
 
 export default {
   login({ Tel, ExCode }) {//http://101.200.196.202:8888/Admin/
-    return post("/Admin/AdminLoginTest", { Tel, ExCode });
+    return post("/Admin/AdminLogin", { Tel, ExCode });
   },
   register({ NickName, Tel, ExCode }) {
     return post("/User/UserReg", { NickName, Tel, ExCode });
@@ -33,6 +33,10 @@ export default {
     const { StoreId } = params;
     const url = StoreId ? '/Store/EditStore' : 'Store/SaveStore';
     return post(url, params);
+  },
+  //获取店铺信息
+  getStoreInfo({ Need, StoreId }) {
+    return post("/Store/GetStoreInfo", { Need, StoreId });
   },
   //绑定银行卡
   bindBank({ StoreId, BankName, CardNo }) {

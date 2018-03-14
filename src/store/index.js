@@ -6,7 +6,7 @@ import AppReducer from 'src/reducers';
 import { CreateReduxField } from "src/common";
 
 const initialNav = AppNavigator.router.getStateForAction(
-  AppNavigator.router.getActionForPathAndParams("StoreAdd")
+  AppNavigator.router.getActionForPathAndParams("Login")
 );
 
 const initStore = {
