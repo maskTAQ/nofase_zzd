@@ -37,9 +37,13 @@ export default class BindBank extends Component {
   };
   componentWillMount() {
     const { LegalName, LegCode, LegTel } = this.props.newStoreInfo.base;
+    const { BankName, CardNo } = this.props.newStoreInfo.bank;
     this.handleValueChange('LegalName', LegalName);
     this.handleValueChange('LegCode', LegCode);
     this.handleValueChange('LegTel', LegTel);
+
+    this.handleValueChange('BankName', BankName);
+    this.handleValueChange('CardNo', CardNo);
   }
   handleValueChange = (currentKey, value) => {
     const data = Object.assign([], this.state.data);
@@ -69,9 +73,9 @@ export default class BindBank extends Component {
     const BankName = this.getValueByKey('BankName'),
       CardNo = this.getValueByKey('CardNo');
 
-    if(!BankName || !CardNo){
+    if (!BankName || !CardNo) {
       Tip.fail('请完整填写信息');
-    }else{
+    } else {
       const { StoreId } = this.props.newStoreInfo.base;
       api.bindBank({ StoreId, BankName, CardNo })
         .then(res => {
@@ -88,7 +92,7 @@ export default class BindBank extends Component {
           );
         });
     }
-    
+
 
   }
   renderList() {
@@ -131,12 +135,15 @@ export default class BindBank extends Component {
   }
   render() {
     const { weeks, isPickerVisible } = this.state;
+    const { StoreId } = this.props.newStoreInfo.base;
+    const buttonLabel = StoreId ? '更新银行卡信息' : '提交银行卡信息';
+    
     return (
       <Page title="银行卡认证信息">
         <View style={styles.container}>
           {this.renderList()}
           <Button onPress={this.save} style={styles.save} textStyle={styles.saveText}>
-            保存
+            {buttonLabel}
           </Button>
         </View>
 

@@ -96,7 +96,7 @@ export default class StoreAdd extends Component {
           })
         },
         {
-          label: "位置", key: 'map', value: "未选择", onPress: this.proxyPress(() => {
+          label: "位置", key: 'map', value: "去选择", onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "Map" })
             );
@@ -107,7 +107,7 @@ export default class StoreAdd extends Component {
       ],
       bottomListData: [
         {
-          label: "店铺图库", value: "未设置", key: 'ImgJson', onPress: this.proxyPress(() => {
+          label: "店铺图库", value: "去上传", key: 'ImgJson', onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "ImgStore" })
             );
@@ -161,6 +161,7 @@ export default class StoreAdd extends Component {
   componentWillReceiveProps(nextProps) {
     const { hour, bank, deviceManage, timetable, StoreRemarks, base } = nextProps.newStoreInfo;
 
+    console.log(nextProps.newStoreInfo)
     this.setValueStatus('topListData', 'base', base);
     this.setValueStatus('topListData', 'bank', bank);
 
@@ -184,9 +185,15 @@ export default class StoreAdd extends Component {
   }
   setValueStatus(dataName, key, value) {
     const data = Object.assign([], this.state[dataName]);
+    const hasValue = (o) => {
+      for (const i in o) {
+        return true;
+      }
+      return false;
+    }
     for (let i = 0; i < data.length; i++) {
       if (data[i].key === key) {
-        data[i].value = value ? '已填写' : '未填写'
+        data[i].value = hasValue(value) ? '已填写' : '未填写'
       }
     }
     this.setState({
@@ -208,7 +215,7 @@ export default class StoreAdd extends Component {
   //更新店铺信息
   editStore = () => {
     const { topListData, bottomListData } = this.state;
-    const { base, hour, bank, deviceManage, timetable, StoreRemarks} = this.props.newStoreInfo;
+    const { base, hour, bank, deviceManage, timetable, StoreRemarks } = this.props.newStoreInfo;
     const data = [].concat(topListData, bottomListData);
 
     if (!base) {
@@ -230,11 +237,11 @@ export default class StoreAdd extends Component {
     const params = {
       StoreId: base.StoreId,
       StoreRemarks,
-      CurrJson:timetable,
+      CurrJson: timetable,
       ...result,
       ...hour,
       ...deviceManage,
-      
+
     }
 
 

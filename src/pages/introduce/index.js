@@ -1,20 +1,32 @@
 import React, { Component } from "react";
 import { View, TextInput, Text } from "react-native";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 import action from "src/action";
 import { Page, Button } from "src/components";
 import styles from "./style";
+
+@connect(state => {
+    const { newStoreInfo } = state;
+    return { newStoreInfo };
+  })
 export default class Introduce extends Component {
     static defaultProps = {
 
     };
     static propTypes = {
         navigation: PropTypes.object,
+        newStoreInfo: PropTypes.object,
     };
     state = {
         value: '',
     };
+    componentWillMount() {
+        this.setState({
+            value:this.props.newStoreInfo.StoreRemarks
+        });
+    }
     onChangeText = (v) => {
         this.setState({
             value: v

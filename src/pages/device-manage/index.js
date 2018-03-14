@@ -37,33 +37,57 @@ export default class DeviceManage extends Component {
     navigation: PropTypes.object,
     newStoreInfo: PropTypes.object,
   };
+
   state = {
     data: [
-      { label: "淋浴", value: "", key: "Bach", checked: true },
-      { label: "储物", value: "", key: "Storage", checked: true },
+      { label: "淋浴", value: "", key: "Bach", checked: true,editable:false, },
+      { label: "储物", value: "", key: "Storage", checked: true ,editable:false,},
       {
         label: "有氧器材",
-        value: "11",
+        value: "0",
+        editable:true,
         key: "IsAerobic",
         valueKey: "Aerobic",
         checked: true
       },
       {
         label: "力量器材",
-        value: "12",
+        value: "0",
+        editable:true,
         key: "IsPower",
         valueKey: "Power",
         checked: true
       },
       {
         label: "康体设备",
-        value: "13",
+        value: "0",
+        editable:true,
         key: "IsHealthCare",
         valueKey: "HealthCare",
         checked: true
       }
     ]
   };
+  componentWillMount() {
+    this.loadInitValue();
+  }
+  loadInitValue() {
+    const { deviceManage } = this.props.newStoreInfo;
+    const nextData = Object.assign([], this.state.data);
+    for (const item in deviceManage) {
+      for (let i = 0; i < nextData.length; i++) {
+        if (nextData[i].key === item) {
+          nextData[i].checked = Boolean(deviceManage[item]);
+        }
+        if(nextData[i].valueKey === item){
+          nextData[i].value = deviceManage[item];
+        }
+      }
+    }
+    this.setState({
+      data: nextData
+    });
+  }
   handleValueChange(v, i, key) {
     const nextData = Object.assign([], this.state.data);
     nextData[i][key] = v;
@@ -83,7 +107,7 @@ export default class DeviceManage extends Component {
     });
     this.props.navigation.dispatch(
       action.editStoreInfo({
-        deviceManage:result
+        deviceManage: result
       })
     )
     return this.props.navigation.dispatch(
@@ -92,7 +116,7 @@ export default class DeviceManage extends Component {
   };
 
   renderItem = (item, i) => {
-    const { label, value, checked } = item;
+    const { label, value, checked ,editable} = item;
     return (
       <View style={styles.item} key={label}>
         <View style={styles.itemLeft}>
@@ -100,6 +124,7 @@ export default class DeviceManage extends Component {
         </View>
         <View style={styles.itemRight}>
           <Input
+            editable={editable}
             value={value}
             onChangeText={v => this.handleValueChange(v, i, "value")}
             style={styles.itemValue}
@@ -120,7 +145,6 @@ export default class DeviceManage extends Component {
         <View style={styles.container}>
           <FlatList
             data={data}
-            keyExtractor={(row, i) => i}
             ItemSeparatorComponent={() => <View style={styles.itemBorder} />}
             renderItem={({ item, index }) => this.renderItem(item, index)}
           />

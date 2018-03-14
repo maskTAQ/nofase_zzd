@@ -51,7 +51,7 @@ export default class StoreBaseInfo extends Component {
         for (const item in base) {
             for (let i = 0; i < nextData.length; i++) {
                 if (nextData[i].key === item) {
-                    nextData.value = base[item];
+                    nextData[i].value = base[item];
 
                 }
             }
@@ -101,7 +101,8 @@ export default class StoreBaseInfo extends Component {
     render() {
         const { data } = this.state;
         const { StoreId } = this.props.newStoreInfo.base;
-        const buttonLabel = StoreId ? '创建店铺' : '编辑店铺';
+        
+        const buttonLabel = StoreId ? '编辑店铺' : '创建店铺';
         return (
             <Page title="店铺基本信息">
                 <View style={styles.container}>

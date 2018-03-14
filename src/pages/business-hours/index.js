@@ -6,7 +6,7 @@ import moment from "moment";
 import DateTimePicker from "react-native-modal-datetime-picker";
 
 import action from "src/action";
-import {  Tip } from "src/common";
+import { Tip } from "src/common";
 import { Page, Button, Picker } from "src/components";
 import styles from "./style";
 
@@ -46,7 +46,7 @@ Switch.propTypes = {
 
 @connect(state => {
   const { newStoreInfo } = state;
-  return {  newStoreInfo };
+  return { newStoreInfo };
 })
 export default class BusinessHours extends Component {
   static defaultProps = {};
@@ -58,8 +58,8 @@ export default class BusinessHours extends Component {
     isPickerVisible: false,
     startWeek: "周一",
     startWeekValue: "1",
-    endWeek: "周二",
-    endWeekValue: "2",
+    endWeek: "周日",
+    endWeekValue: "0",
     isDateTimePickerVisible: false,
     startTime: "请选择开始时间",
     startTimeData: null,
@@ -67,10 +67,24 @@ export default class BusinessHours extends Component {
     endTimeData: null,
     isClose: 1 //1营业 2未营业
   };
+  componentWillMount() {
+    const { isClose,  Times } = this.props.newStoreInfo.hour;
+    //const weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    if (isClose) {
+      const time = Times.split('-');
+      this.setState({
+        isClose,
+        startTime: time[0],
+        endTime: time[0]
+      })
+    }
+
+    //console.log(Weeks)
+  }
   componentWillReceiveProps(nextProps) {
-    const {hour} = nextProps.newStoreInfo;
-    console.log(hour,99)
-    this.setState({...hour})
+    const { hour } = nextProps.newStoreInfo;
+    console.log(hour, 99)
+    this.setState({ ...hour })
   }
   store = {
     weeks: [
@@ -135,10 +149,12 @@ export default class BusinessHours extends Component {
   }
   save = () => {
     const { isClose, startTime, endTime } = this.state;
+    //let {startWeekValue,endWeekValue} = this.state;
     const isHasInitTime = startTime.includes(":") && endTime.includes(":");
 
+    
     if (!isHasInitTime) {
-      return Tip.fail("请选择时间");
+      Tip.fail("请选择时间");
     } else {
       this.props.navigation.dispatch(
         action.editStoreInfo({
@@ -149,7 +165,7 @@ export default class BusinessHours extends Component {
           }
         })
       )
-      return this.props.navigation.dispatch(
+      this.props.navigation.dispatch(
         action.navigate.back()
       );
     }

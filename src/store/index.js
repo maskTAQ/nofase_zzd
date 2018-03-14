@@ -6,7 +6,7 @@ import AppReducer from 'src/reducers';
 import { CreateReduxField } from "src/common";
 
 const initialNav = AppNavigator.router.getStateForAction(
-  AppNavigator.router.getActionForPathAndParams("P")
+  AppNavigator.router.getActionForPathAndParams("StoreAdd")
 );
 
 const initStore = {
@@ -17,10 +17,12 @@ const initStore = {
     AdminLevel: ''
   },
   newStoreInfo: {
-    base: {},
+    base: {
+      
+    },
     bank: {},
     hour: {},
-    deviceAdmin: {},
+    deviceManage: {},
     timetable: [],
     StoreRemarks: ''
   },

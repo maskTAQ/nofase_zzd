@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Alert, ScrollView, Modal, Text } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
-//import { connect } from "react-redux";
+import { connect } from "react-redux";
 import moment from "moment";
 import PropTypes from "prop-types";
 
@@ -10,13 +10,16 @@ import action from "src/action";
 import { Page, Button, Table, Input } from "src/components";
 import styles from "./style";
 
+
+
 class SelectTimeModal extends Component {
   static propTypes = {
     requestChangeTime: PropTypes.func,
     rowData: PropTypes.object,
     rowIndex: PropTypes.number,
     isVisible:PropTypes.bool,
-    close:PropTypes.func
+    close:PropTypes.func,
+    
   };
   state = {
     isDateTimePickerVisible: false,
@@ -78,6 +81,10 @@ class SelectTimeModal extends Component {
     )
   }
 }
+@connect(state => {
+  const { newStoreInfo } = state;
+  return { newStoreInfo };
+})
 export default class Timetable extends Component {
   static defaultProps = {};
   static propTypes = {
@@ -86,30 +93,35 @@ export default class Timetable extends Component {
   };
   state = {
     dataSource: [
-      {
-        timeRange: "选择时间区",
-        STime: '',
-        ETime: '',
-        Week0: "",
-        Week1: "",
-        Week2: "",
-        Week3: "",
-        Week4: "",
-        Week5: "",
-        Week6: "",
-        k: ""
-      }
+      // {
+      //   STime: '',
+      //   ETime: '',
+      //   Week0: "",
+      //   Week1: "",
+      //   Week2: "",
+      //   Week3: "",
+      //   Week4: "",
+      //   Week5: "",
+      //   Week6: "",
+      //   deleteButton: ""
+      // }
     ],
     currentActiveRow: null,
     currentActiveRowIndex: NaN,
     isTimeChoosePanelVisible: false,
 
   };
+  componentWillMount() {
+    this.setState({
+      dataSource:this.props.newStoreInfo.timetable
+    })
+    //console.log(this.props.newStoreInfo.timetable,999)
+  }
   store = {
     columns: [
       {
         title: "时间",
-        dataIndex: "timeRange",
+        dataIndex: "STime",
         render: (row, value, index) => {
           const { STime, ETime } = row;
           let label = '';
@@ -169,7 +181,7 @@ export default class Timetable extends Component {
       },
       {
         title: "删除",
-        dataIndex: "k",
+        dataIndex: "deleteButton",
         render: (row, value, i, index) => {
           return (
             <Button
@@ -228,7 +240,8 @@ export default class Timetable extends Component {
   addRow = () => {
     const nextDataSource = Object.assign([], this.state.dataSource);
     nextDataSource.push({
-      timeRange: "选择时间区",
+        STime: '',
+        ETime: '',
       Week0: "",
       Week1: "",
       Week2: "",
@@ -236,7 +249,7 @@ export default class Timetable extends Component {
       Week4: "",
       Week5: "",
       Week6: "",
-      k: ""
+      deleteButton: ""
     });
 
     this.setState({

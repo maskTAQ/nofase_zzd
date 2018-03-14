@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, Image, Animated } from "react-native";
+import { View, Text, Image, Animated,AsyncStorage } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -16,10 +16,19 @@ export default class Login extends Component {
   };
   state = {
     phone: "",
-    code: "",
+    code: "test",
     isBgVisible: true,
     viewMarginTop: new Animated.Value(0),
   };
+  componentWillMount() {
+    AsyncStorage.getItem('mobile',(e,m)=>{
+      if(!e && m){
+        this.setState({
+          phone:m
+        });
+      }
+    })
+  }
   handleValueChange(type, value) {
     this.setState({
       [type]: value
@@ -33,7 +42,7 @@ export default class Login extends Component {
     return api
       .login({ Tel: phone, ExCode: code })
       .then(res => {
-        console.log(res,11);
+        AsyncStorage.setItem('mobile',phone)
         this.props.navigation.dispatch(
           action.login(res)
         );
@@ -42,7 +51,7 @@ export default class Login extends Component {
         );
       })
       .catch(e => {
-console.log(e,111212)
+
         Tip.fail(e);
       });
   };
