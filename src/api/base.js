@@ -49,44 +49,31 @@ const post = (
   { loading = true, handleCatch = true } = {}
 ) => {
   loading && Tip.loading();
-  return requestWrapper(url, params)
-    .then(res => {
-      const { data: Data } = res;
-      const { code, message, data } = Data;
-      console.log(Data, url);
-      loading && Tip.dismiss();
-      // if (
-      //   [
-      //     "/Store/GetStoreBusInfo",
-      //     "/Store/GetStoreUserList",
-      //     "/Store/GetStoreBusInfoByDate",
-      //     "/Store/GetStoreInfo"
-      //   ].includes(url)
-      // ) {
-      //   return Promise.resolve(data);
-      // }
+  return new Promise((resolve, reject) => {
+    requestWrapper(url, params)
+      .then(res => {
+        const { data: Data } = res;
+        const { code, message, data } = Data;
+        loading && Tip.dismiss();
+        if (code > 0) {
+          const d = data || message;
+          return resolve(d);
+        } else {
+          Tip.fail(`error:${message}`);
+          return reject(message);
+        }
+      })
+      .catch(e => {
+        console.log(e, url);
+        loading && Tip.dismiss();
+        if (handleCatch) {
+          return Tip.fail(`error:${e}`);
+        } else {
+          return reject(e);
+        }
 
-      // if (data.reason === "操作成功") {
-      //   return Promise.resolve(data);
-      // }
+      });
+  })
 
-      if (code > 0) {
-        const d = data || message;
-        return Promise.resolve(d);
-      } else {
-        Tip.fail(`error:${message}`);
-        return Promise.reject(message);
-      }
-    })
-    .catch(e => {
-      console.log(e, url);
-      loading && Tip.dismiss();
-      if (handleCatch) {
-        return Tip.fail(`error:${e}`);
-      }else{
-        return Promise.reject(e);
-      }
-     
-    });
 };
 export { post };
