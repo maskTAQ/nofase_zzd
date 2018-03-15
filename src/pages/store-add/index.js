@@ -119,38 +119,38 @@ export default class StoreAdd extends Component {
           label: "营业时间",
           value: "未设置",
           key: 'hour',
-          onPress: () => {
+          onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "BusinessHours" })
             );
-          }
+          })
         },
         {
           label: "设备管理",
           value: "未设置",
           key: 'deviceManage',
-          onPress: () => {
+          onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "DeviceManage" })
             );
-          }
+          })
         },
         {
           label: "课程表",
           key: 'timetable',
           value: "未设置",
-          onPress: () => {
+          onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "Timetable" })
             );
-          }
+          })
         },
         {
-          label: "商家介绍/留言", key: 'StoreRemarks', value: "未设置", onPress: () => {
+          label: "商家介绍/留言", key: 'StoreRemarks', value: "未设置", onPress: this.proxyPress(() => {
             this.props.navigation.dispatch(
               action.navigate.go({ routeName: "Introduce" })
             );
-          }
+          })
         },
         {
           label: "客服电话",
