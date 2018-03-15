@@ -14,7 +14,6 @@ const appReducer = combineReducers({
   },
   nav: nav,
   newStoreInfo: (state = {}, action) => {
-    console.log('newStoreInfo:', action)
     const { type, payload } = action;
     if (type === actionMap.EDIT_STORE_INFO) {
       return { ...state, ...payload }

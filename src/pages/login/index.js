@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, Image, Animated,AsyncStorage } from "react-native";
+import { View, Text, Image, Animated, AsyncStorage } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -16,15 +16,15 @@ export default class Login extends Component {
   };
   state = {
     phone: "",
-    code: "",
+    code: "12",
     isBgVisible: true,
     viewMarginTop: new Animated.Value(0),
   };
   componentWillMount() {
-    AsyncStorage.getItem('mobile',(e,m)=>{
-      if(!e && m){
+    AsyncStorage.getItem('mobile', (e, m) => {
+      if (!e && m) {
         this.setState({
-          phone:m
+          phone: m
         });
       }
     })
@@ -42,7 +42,8 @@ export default class Login extends Component {
     return api
       .login({ Tel: phone, ExCode: code })
       .then(res => {
-        AsyncStorage.setItem('mobile',phone)
+        console.log(res,11)
+        AsyncStorage.setItem('mobile', phone)
         this.props.navigation.dispatch(
           action.login(res)
         );
@@ -51,7 +52,7 @@ export default class Login extends Component {
         );
       })
       .catch(e => {
-
+        console.log(e,1)
         Tip.fail(e);
       });
   };
@@ -60,7 +61,7 @@ export default class Login extends Component {
       action.navigate.go({ routeName: "Register" })
     );
   };
-  
+
   render() {
     const { phone, code } = this.state;
     return (
@@ -86,16 +87,16 @@ export default class Login extends Component {
               style={styles.formItemInput}
               placeholder="手机号"
               placeholderTextColor="#fff"
-              // onFocus={() => {
-              //   this.setState({
-              //     isBgVisible: false
-              //   })
-              // }}
-              // onBlur={() => {
-              //   this.setState({
-              //     isBgVisible: true
-              //   })
-              // }}
+            // onFocus={() => {
+            //   this.setState({
+            //     isBgVisible: false
+            //   })
+            // }}
+            // onBlur={() => {
+            //   this.setState({
+            //     isBgVisible: true
+            //   })
+            // }}
             />
           </View>
           <View style={styles.formItem}>
@@ -134,10 +135,10 @@ export default class Login extends Component {
           >
             立即登录
           </Button>
-          
+
         </View>
 
-        
+
         <ShareModal
           isVisible={false}
           username="上都牧人"

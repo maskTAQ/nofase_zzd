@@ -78,6 +78,7 @@ export default class StoreBaseInfo extends Component {
             }
 
         });
+        console.log(result)
         return result;
     }
     add = () => {

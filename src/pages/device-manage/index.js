@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import PropTypes from "prop-types";
 
 import { Page, Button, Input, Icon } from "src/components";
+import api from 'src/api';
 import action from "src/action";
 import styles from "./style";
 import { connect } from "react-redux";
@@ -40,7 +41,7 @@ export default class DeviceManage extends Component {
 
   state = {
     data: [
-      { label: "淋浴", value: "", key: "Bach", checked: true,editable:false, },
+      { label: "淋浴", value: "", key: "Bath", checked: true,editable:false, },
       { label: "储物", value: "", key: "Storage", checked: true ,editable:false,},
       {
         label: "有氧器材",
@@ -96,23 +97,33 @@ export default class DeviceManage extends Component {
     });
   }
   save = () => {
+    const {StoreId} = this.props.newStoreInfo.base;
     const { data } = this.state;
-    const result = {};
+    const result = {StoreId};
     data.forEach(item => {
       const { key, checked, value, valueKey } = item;
       result[key] = Number(checked);
       if (valueKey) {
-        result[valueKey] = value;
+        result[valueKey] = value || 0;
       }
     });
-    this.props.navigation.dispatch(
-      action.editStoreInfo({
-        deviceManage: result
-      })
-    )
-    return this.props.navigation.dispatch(
-      action.navigate.back()
-    );
+
+    api.saveStoreEquip(result)
+    .then(res=>{
+      console.log(result,res,113)
+      this.props.navigation.dispatch(
+        action.editStoreInfo({
+          deviceManage: result
+        })
+      )
+      return this.props.navigation.dispatch(
+        action.navigate.back()
+      );
+    })
+    .catch(e=>{
+      console.log('保存设备失败',e)
+    });
+    
   };
 
   renderItem = (item, i) => {
@@ -125,7 +136,7 @@ export default class DeviceManage extends Component {
         <View style={styles.itemRight}>
           <Input
             editable={editable}
-            value={value}
+            value={String(value)}
             onChangeText={v => this.handleValueChange(v, i, "value")}
             style={styles.itemValue}
             clearButtonMode="never"

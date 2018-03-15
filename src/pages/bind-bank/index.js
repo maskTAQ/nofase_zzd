@@ -27,25 +27,25 @@ export default class BindBank extends Component {
       { label: "招商银行", value: "招商银行" }
     ],
     data: [
-      { key: 'LegalName', label: '法人姓名', disabled: true, value: '', placeholder: '' },
-      { key: 'LegCode', label: '法人身份证', disabled: true, value: '', placeholder: '' },
+      { key: 'LegalName', label: '法人姓名', value: '', placeholder: '' },
+      { key: 'LegCode', label: '法人身份证', value: '', placeholder: '' },
       { key: 'BankName', label: '所属行', value: '', placeholder: '请选择银行' },
       { key: 'CardNo', label: '卡号', value: '', placeholder: '请输入卡号' },
-      { key: 'LegTel', label: '绑定法人\n手机号码', disabled: true, value: '', placeholder: '手机号码不可更改' }
+      { key: 'LegTel', label: '绑定法人\n手机号码', value: '', placeholder: '手机号码不可更改' }
     ],
     isPickerVisible: false
   };
   componentWillMount() {
-    const { LegalName, LegCode, LegTel } = this.props.newStoreInfo.base;
-    const { BankName, CardNo } = this.props.newStoreInfo.bank;
-    this.handleValueChange('LegalName', LegalName);
-    this.handleValueChange('LegCode', LegCode);
-    this.handleValueChange('LegTel', LegTel);
-
+    const { LegalName: defaultLegalName, LegCode: defaultLegCode, LegTel: defaultLegTel } = this.props.newStoreInfo.base;
+    const { LegalName, LegCode, LegTel, BankName, CardNo } = this.props.newStoreInfo.bank;
+    console.log(LegalName, defaultLegalName)
+    this.handleValueChange('LegalName', LegalName || defaultLegalName);
+    this.handleValueChange('LegCode', LegCode || defaultLegCode);
+    this.handleValueChange('LegTel', LegTel || defaultLegTel);
     this.handleValueChange('BankName', BankName);
     this.handleValueChange('CardNo', CardNo);
   }
-  
+
   handleValueChange = (currentKey, value) => {
     const data = Object.assign([], this.state.data);
     for (let i = 0; i < data.length; i++) {
@@ -60,32 +60,36 @@ export default class BindBank extends Component {
     }
     return null;
   }
-  getValueByKey(findKey) {
+  getValueByKey() {
     const { data } = this.state;
+    const result = {};
     for (let i = 0; i < data.length; i++) {
       const { key, value } = data[i];
-      if (key === findKey) {
-        return value;
-      }
+      result[key] = value;
     }
-    return '';
+    return result;
   }
   save = () => {
-    const BankName = this.getValueByKey('BankName'),
-      CardNo = this.getValueByKey('CardNo');
+    const { LegalName: defaultLegalName, LegCode: defaultLegCode, LegTel: defaultLegTel } = this.props.newStoreInfo.base;
+    const { LegalName, LegCode, LegTel, BankName, CardNo } = this.getValueByKey();
 
-    if (!BankName || !CardNo) {
+
+    if (!BankName || !CardNo || !LegalName || !LegCode || !LegTel) {
       Tip.fail('请完整填写信息');
     } else {
       const { StoreId } = this.props.newStoreInfo.base;
-      api.bindBank({ StoreId, BankName, CardNo })
+      const params = {
+        LegalName: LegalName || defaultLegalName,
+        LegCode: LegCode || defaultLegCode,
+        LegTel: LegTel || defaultLegTel,
+        BankName, CardNo
+      };
+      console.log(params)
+      api.bindBank({ StoreId, ...params })
         .then(res => {
           this.props.navigation.dispatch(
             action.editStoreInfo({
-              bank: {
-                BankName,
-                CardNo,
-              }
+              bank: params
             })
           )
           return this.props.navigation.dispatch(
@@ -138,7 +142,7 @@ export default class BindBank extends Component {
     const { weeks, isPickerVisible } = this.state;
     const { StoreId } = this.props.newStoreInfo.base;
     const buttonLabel = StoreId ? '更新银行卡信息' : '提交银行卡信息';
-    
+
     return (
       <Page title="银行卡认证信息">
         <View style={styles.container}>

@@ -6,7 +6,8 @@ import moment from "moment";
 import PropTypes from "prop-types";
 
 import action from "src/action";
-
+import api from 'src/api';
+import {Tip} from 'src/common';
 import { Page, Button, Table, Input } from "src/components";
 import styles from "./style";
 
@@ -112,8 +113,13 @@ export default class Timetable extends Component {
 
   };
   componentWillMount() {
+    let dataSource = Object.assign([],this.props.newStoreInfo.timetable);
+    dataSource = dataSource.sort((prev,next)=> prev.Id - next.Id).map(item=>{
+      item.deleteButton = item.StoreId;
+      return item;
+    });
     this.setState({
-      dataSource:this.props.newStoreInfo.timetable
+      dataSource
     })
     //console.log(this.props.newStoreInfo.timetable,999)
   }
@@ -140,7 +146,6 @@ export default class Timetable extends Component {
               label = '选择时间段';
               break;
           }
-          console.log(STime, ETime,label )
           return (
             <Button
               onPress={() => this.selectTimeRange(row, index)}
@@ -267,22 +272,23 @@ export default class Timetable extends Component {
   };
   save = () => {
     const { dataSource } = this.state;
-    this.props.navigation.dispatch(
-      action.editStoreInfo({
-        timetable: dataSource
-      })
-    )
-    return this.props.navigation.dispatch(
-      action.navigate.back()
-    );
-    // api
-    //   .saveCurriculum({ data: dataSource })
-    //   .then(res => {
-    //     Tip.success("保存成功");
-    //   })
-    //   .catch(e => {
-    //     Tip.fail("保存失败");
-    //   });
+    const {StoreId} = this.props.newStoreInfo.base;
+    api.saveCurriculum({CurrJson:JSON.stringify(dataSource),StoreId})
+    .then(res=>{
+      this.props.navigation.dispatch(
+        action.editStoreInfo({
+          timetable: dataSource
+        })
+      )
+      return this.props.navigation.dispatch(
+        action.navigate.back()
+      );
+    })
+    .catch(e => {
+      Tip.fail("保存失败");
+    });
+    
+    
   };
   render() {
     const { columns } = this.store;
@@ -330,7 +336,6 @@ export default class Timetable extends Component {
           requestChangeTime={(value, index, type) => {
             const data = Object.assign([], this.state.dataSource);
             data[index][type] = value;
-            console.log(data)
             this.setState({
               dataSource:data
             })

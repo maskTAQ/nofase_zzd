@@ -2,7 +2,7 @@ import { post } from "./base";
 
 export default {
   login({ Tel, ExCode }) {//http://101.200.196.202:8888/Admin/
-    return post("/Admin/AdminLogin", { Tel, ExCode });
+    return post("/Admin/AdminLoginTest", { Tel, ExCode });
   },
   register({ NickName, Tel, ExCode }) {
     return post("/User/UserReg", { NickName, Tel, ExCode });
@@ -31,6 +31,7 @@ export default {
   //更新店铺
   updateStore(params) {
     const { StoreId } = params;
+    console.log(params,13123)
     const url = StoreId ? '/Store/EditStore' : 'Store/SaveStore';
     return post(url, params);
   },
@@ -40,15 +41,31 @@ export default {
     return post("/Store/GetStoreInfoByNeed", { Need, StoreId,AdminId});
   },
   //绑定银行卡
-  bindBank({ StoreId, BankName, CardNo }) {
-    return post("/Store/BindBank", { StoreId, BankName, CardNo });
+  bindBank(params) {
+    return post("/Store/BindBank", params);
   },
   //获取银行卡信息
-  getBankCardInfo() {
-    return post("/Store/GetBankInfo");
+  getBankCardInfo({StoreId}) {
+    return post("/Store/GetBankInfo",{StoreId});
   },
   //获取店铺列表 GetStoreUserListByDateTest
   getStoreList(loading){
     return post("/Admin/GetStoreUserListByDateTest", {},{loading});
-  }
+  },
+  //保存课程表
+  saveCurriculum({CurrJson,StoreId}){
+    return post("/Store/SaveCurriculum", {CurrJson,StoreId});
+  },
+  //读取课程表
+  getCurriculum({StoreId}){
+    return post("/Store/GetCurriculumList", {StoreId});
+  },
+  //保存设备信息
+  saveStoreEquip(params){
+    return post("/Store/SaveStoreEquip", params);
+  },
+  //获取设备信息http://101.200.196.202:8888/Admin/GetStoreEqui
+  getStoreEquip(params){
+    return post("/Store/GetStoreEqui", params);
+  },
 };

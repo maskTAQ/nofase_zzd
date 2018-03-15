@@ -39,7 +39,7 @@ const requestWrapper = (url, param = {}) => {
     baseURL: baseURL,
     url,
     method: "post",
-    timeout: 50000,
+    timeout: 60000,
     data: param
   });
 };
@@ -52,6 +52,7 @@ const post = (
   return new Promise((resolve, reject) => {
     requestWrapper(url, params)
       .then(res => {
+        console.log(res)
         const { data: Data } = res;
         const { code, message, data } = Data;
         loading && Tip.dismiss();
@@ -64,12 +65,12 @@ const post = (
         }
       })
       .catch(e => {
-        console.log(e, url);
+        console.log(e, url,params);
         loading && Tip.dismiss();
         if (handleCatch) {
-          return Tip.fail(`error:${e}`);
+           Tip.fail(`error:${String(e)}`);
         }
-        return reject(e);
+        return reject(String(e));
       });
   })
 

@@ -166,7 +166,9 @@ export default class StoreAdd extends Component {
     //有店铺列表进入的编辑页则初始化店铺数据
     if (StoreId) {
       this.getStoreInitData(StoreId);
-      this.getBankCardInfo();
+      this.getBankCardInfo(StoreId);
+      this.getStoreEquip(StoreId);
+      this.getCurriculum(StoreId)
     }
 
   }
@@ -189,15 +191,15 @@ export default class StoreAdd extends Component {
     const { AdminId } = this.props;
     api.getStoreInfo({ StoreId, AdminId })
       .then(res => {
-        const { StoreRemarks, Id, StoreName, StoreTel, StoreType,
+        const {
+          StoreRemarks, Id, StoreName, StoreTel, StoreType,
           LegalName,
           LegTel,
           LegCode,
           SalesmanName,
           ContractCode, BusinessWeeks,
           BusinessTimes,
-          Flag, PeopleNum, Charge, CsTel, Bath
-          , Aerobic, IsAerobic, Power, IsPower, HealthCare, IsHealthCare } = res;
+          Flag, PeopleNum, Charge, CsTel } = res;
 
         const result = {
           base: {
@@ -210,20 +212,12 @@ export default class StoreAdd extends Component {
             LegCode,
             SalesmanName,
             ContractCode,
-
-          },
-          bank: {
-
           },
           hour: {
             BusinessWeeks,
             BusinessTimes,
             Flag
           },
-          deviceManage: {
-            Bath, Storage, Aerobic, IsAerobic, Power, IsPower, HealthCare, IsHealthCare
-          },
-          timetable: [],
           StoreRemarks
         };
 
@@ -247,20 +241,49 @@ export default class StoreAdd extends Component {
         Tip.fail('初始化店铺数据失败');
       })
   }
-  getBankCardInfo() {
-    api.getBankCardInfo()
+  getBankCardInfo(StoreId) {
+    api.getBankCardInfo({ StoreId })
       .then(res => {
-        const { BankName, CardNo } = res;
+        const { LegalName, LegCode, LegTel, BankName, CardNo } = res;
         this.props.navigation.dispatch(
           action.editStoreInfo({
             bank: {
-              BankName, CardNo
+              LegalName, LegCode, LegTel, BankName, CardNo
             }
           })
         )
       })
       .catch(e => {
+        console.log(e)
         Tip.fail('初始化银行卡信息失败');
+      })
+  }
+  getStoreEquip(StoreId) {
+    api.getStoreEquip({ StoreId })
+      .then(res => {
+        this.props.navigation.dispatch(
+          action.editStoreInfo({
+            deviceManage: res,
+          })
+        )
+      })
+      .catch(e => {
+        console.log(e)
+        Tip.fail('初始化设备信息失败');
+      })
+  }
+  getCurriculum(StoreId) {
+    api.getCurriculum({ StoreId })
+      .then(res => {
+        this.props.navigation.dispatch(
+          action.editStoreInfo({
+            timetable: res,
+          })
+        )
+      })
+      .catch(e => {
+        console.log(e)
+        Tip.fail('初始化课程表信息失败');
       })
   }
   proxyPress = (press) => {
@@ -306,7 +329,7 @@ export default class StoreAdd extends Component {
   //更新店铺信息
   editStore = () => {
     const { topListData, bottomListData } = this.state;
-    const { base, hour, bank, deviceManage, timetable, StoreRemarks } = this.props.newStoreInfo;
+    const { base, hour, bank, timetable, StoreRemarks } = this.props.newStoreInfo;
     const data = [].concat(topListData, bottomListData);
 
     if (!base) {
@@ -331,8 +354,6 @@ export default class StoreAdd extends Component {
       CurrJson: timetable,
       ...result,
       ...hour,
-      ...deviceManage,
-
     }
 
 
