@@ -68,10 +68,8 @@ const post = (
         loading && Tip.dismiss();
         if (handleCatch) {
           return Tip.fail(`error:${e}`);
-        } else {
-          return reject(e);
         }
-
+        return reject(e);
       });
   })
 
