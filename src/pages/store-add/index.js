@@ -196,7 +196,8 @@ export default class StoreAdd extends Component {
           SalesmanName,
           ContractCode, BusinessWeeks,
           BusinessTimes,
-          Flag, PeopleNum, Charge, CsTel } = res;
+          Flag, PeopleNum, Charge, CsTel, Bath
+          , Aerobic, IsAerobic, Power, IsPower, HealthCare, IsHealthCare } = res;
 
         const result = {
           base: {
@@ -219,7 +220,9 @@ export default class StoreAdd extends Component {
             BusinessTimes,
             Flag
           },
-          deviceManage: {},
+          deviceManage: {
+            Bath, Storage, Aerobic, IsAerobic, Power, IsPower, HealthCare, IsHealthCare
+          },
           timetable: [],
           StoreRemarks
         };
@@ -244,21 +247,21 @@ export default class StoreAdd extends Component {
         Tip.fail('初始化店铺数据失败');
       })
   }
-  getBankCardInfo(){
+  getBankCardInfo() {
     api.getBankCardInfo()
-    .then(res=>{
-      const {BankName,CardNo} = res;
-      this.props.navigation.dispatch(
-        action.editStoreInfo({
-          bank:{
-            BankName,CardNo
-          }
-        })
-      )
-    })
-    .catch(e=>{
-      Tip.fail('初始化银行卡信息失败');
-    })
+      .then(res => {
+        const { BankName, CardNo } = res;
+        this.props.navigation.dispatch(
+          action.editStoreInfo({
+            bank: {
+              BankName, CardNo
+            }
+          })
+        )
+      })
+      .catch(e => {
+        Tip.fail('初始化银行卡信息失败');
+      })
   }
   proxyPress = (press) => {
     return () => {
