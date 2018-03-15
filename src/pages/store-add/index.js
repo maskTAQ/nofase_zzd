@@ -163,8 +163,10 @@ export default class StoreAdd extends Component {
 
   componentWillMount() {
     const { StoreId } = this.props.navigation.state.params;
-    if (StoreId || StoreId === 0) {
+    //有店铺列表进入的编辑页则初始化店铺数据
+    if (StoreId) {
       this.getStoreInitData(StoreId);
+      this.getBankCardInfo();
     }
 
   }
@@ -185,7 +187,6 @@ export default class StoreAdd extends Component {
 
   getStoreInitData(StoreId) {
     const { AdminId } = this.props;
-    Tip.loading('初始化店铺数据中');
     api.getStoreInfo({ StoreId, AdminId })
       .then(res => {
         const { StoreRemarks, Id, StoreName, StoreTel, StoreType,
@@ -242,6 +243,22 @@ export default class StoreAdd extends Component {
         console.log(e)
         Tip.fail('初始化店铺数据失败');
       })
+  }
+  getBankCardInfo(){
+    api.getBankCardInfo()
+    .then(res=>{
+      const {BankName,CardNo} = res;
+      this.props.navigation.dispatch(
+        action.editStoreInfo({
+          bank:{
+            BankName,CardNo
+          }
+        })
+      )
+    })
+    .catch(e=>{
+      Tip.fail('初始化银行卡信息失败');
+    })
   }
   proxyPress = (press) => {
     return () => {

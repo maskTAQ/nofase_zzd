@@ -43,6 +43,10 @@ export default {
   bindBank({ StoreId, BankName, CardNo }) {
     return post("/Store/BindBank", { StoreId, BankName, CardNo });
   },
+  //获取银行卡信息
+  getBankCardInfo() {
+    return post("/Store/GetBankInfo");
+  },
   //获取店铺列表 GetStoreUserListByDateTest
   getStoreList(loading){
     return post("/Admin/GetStoreUserListByDateTest", {},{loading});

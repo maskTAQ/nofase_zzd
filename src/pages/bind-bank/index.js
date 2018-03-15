@@ -45,6 +45,7 @@ export default class BindBank extends Component {
     this.handleValueChange('BankName', BankName);
     this.handleValueChange('CardNo', CardNo);
   }
+  
   handleValueChange = (currentKey, value) => {
     const data = Object.assign([], this.state.data);
     for (let i = 0; i < data.length; i++) {
