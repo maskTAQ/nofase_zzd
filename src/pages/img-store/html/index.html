@@ -11,25 +11,7 @@
             width: 100%;
         }
 
-        .img-box div {
-            display: inline-block;
-            position: relative;
-            width: 16%;
-            margin: 2%;
-            height: 100px;
-            text-align: center;
-        }
 
-        .img-box .img-content {
-            height: 60px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .img-box span {
-            color: #0398e5;
-            font-size: 13px;
-        }
 
         .upimg {
             height: 80px;
@@ -41,18 +23,7 @@
             text-align: center;
         }
 
-        .img-content {
-            height: 60px;
-            text-align: center;
-        }
 
-        .img-del {
-            position: absolute;
-            right: 0px;
-            height: 20px;
-            width: 20px;
-            top: 0px;
-        }
 
         .update,
         .upload-img {
@@ -67,7 +38,38 @@
             border-radius: 8px;
         }
 
-        
+        .img-box .img-wrapper {
+            display: inline-block;
+            position: relative;
+            width: 16%;
+            margin: 2%;
+            height: 100px;
+            border: 1px solid red;
+            text-align: center;
+        }
+
+        .img-wrapper img {
+            height: 60px;
+            width: 100%;
+            text-align: center;
+            border: none;
+            outline: none;
+        }
+
+        .img-wrapper p {
+            font-size: 12px;
+        }
+
+        .img-wrapper .close {
+            font-size: 12px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background: url('./img/del.png') no-repeat center center;
+            background-size: 100%;
+        }
     </style>
 </head>
 
@@ -95,25 +97,28 @@
             StoreId: 1,
             getUrl: 'http://101.200.196.202:8888/Store/GetStoreImgs',
             upUrl: 'http://101.200.196.202:8888/Store/SaveStoreImg',
-            deledeUrl: ''
+            deledeUrl: 'http://101.200.196.202:8888/Store/DelStoreImg'
         };
 
         var upImg = function (base) {
-            $.ajax({
-                url: params.upUrl,
-                type: 'post',
-                data: { StoreId: params.StoreId, ImgJson: JSON.stringify([{ ImgBase64: base, ImgNo: params.StoreId + '-' + Date.now() }]) },
-                success: function (res) {
-                    if (res.code > 0) {
-                        resolve();
-                    } else {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: params.upUrl,
+                    type: 'post',
+                    data: { StoreId: params.StoreId, ImgJson: JSON.stringify([{ ImgBase64: base, ImgNo: String(Date.now()).substring(3, 13) }]) },
+                    success: function (res) {
+                        if (res.code > 0) {
+                            resolve();
+                        } else {
+                            reject();
+                        }
+                    },
+                    error: function (e) {
                         reject();
                     }
-                },
-                error: function (e) {
-                    reject();
-                }
+                })
             })
+
         };
         var getImg = function () {
             return new Promise(function (resolve, reject) {
@@ -122,8 +127,29 @@
                     type: 'post',
                     data: { StoreId: params.StoreId },
                     success: function (res) {
+                        console.log(res)
                         if (res.code > 0) {
-                            resolve(res.data);
+                            resolve(res);
+                        } else {
+                            reject();
+                        }
+                    },
+                    error: function (e) {
+                        reject();
+                    }
+                })
+            })
+        };
+        var deleteImg = function (Id) {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: params.deledeUrl,
+                    type: 'post',
+                    data: { StoreId: params.StoreId ,ImgId:Id},
+                    success: function (res) {
+                        console.log(res)
+                        if (res.code > 0) {
+                            resolve(res);
                         } else {
                             reject();
                         }
@@ -135,53 +161,61 @@
             })
         };
 
-        var prevImg = [];
-        getImg(function (res) {
-            console.log(res)
-            prevImg = res.data.map(function (item) {
-                return {
-                    ImgUrl: item.ImgUrl,
-                    Id: item.Id,
-                    status: 'success'
-                }
-            });
-            handleImgStatusChange();
+        var prevImg = [
+            {
+                ImgUrl: 'e.target.result',
+                Id: '',
+                status: 'none'
+            },
+            {
+                ImgUrl: 'e.target.result',
+                Id: '',
+                status: 'none'
+            }
+        ];
 
-        }, function (e) {
-            console.log('获取图库数据失败', e)
-        });
-        var handleImgStatusChange = function () {
-            //在这里 更改页面
-            $imgBox.html();
-            preUpImgs.forEach(function(item){
-                console.log(item)
+        getImg()
+            .then(function (res) {
+                console.log(res)
+                prevImg = res.data.map(function (item) {
+                    return {
+                        ImgUrl: item.ImgUrl,
+                        Id: item.Id,
+                        status: 'success'
+                    }
+                });
+                handleImgStatusChange();
+
+            }, function (e) {
+                console.log('获取图库数据失败', e)
             });
-            // for (var item in imgBase64) {
-            //     var status = imgBase64[item].status;
-            //     var label = '';
-            //     switch (status) {
-            //         case 'none':
-            //             label = '未上传'
-            //             break;
-            //         case 'uping':
-            //             label = '上传中...'
-            //             break;
-            //         case 'success':
-            //             label = '上传成功'
-            //             break;
-            //         case 'error':
-            //             label = '上传失败'
-            //             break;
-            //     }
-            //     $('#' + item + '-img').siblings('p').text(label)
-            // }
+        var handleImgStatusChange = function () {
+            console.log(prevImg);
+            $imgBox.html('');
+            for (var i = 0; i < prevImg.length; i++) {
+                var status = prevImg[i].status;
+                var src = prevImg[i].ImgUrl;
+                var label = '';
+                switch (status) {
+                    case 'none':
+                        label = '未上传'
+                        break;
+                    case 'uping':
+                        label = '上传中...'
+                        break;
+                    case 'success':
+                        label = '上传成功'
+                        break;
+                    case 'error':
+                        label = '上传失败'
+                        break;
+                }
+                $imgBox.append('<div class="img-wrapper"><img src=' + src + ' /><p>' + label + '</p><button class="close"><button/></div>')
+            }
+
+
         }
-       $imgBox.on('click', '.img-del', function () {
-            var delIndex = $('.img-del').index(this);
-            preUpImgs.splice(delIndex, 1);
-            $imgBox.children().eq(delIndex).remove();
-            toggleSubmitButtonVisible();
-        });
+        handleImgStatusChange();
         //监听文件改变
         $('#imgFiles').on('change', function () {
             //将FileList对象转为数组遍历
@@ -203,24 +237,46 @@
                                     status: 'none'
                                 }
                             )
+                            handleImgStatusChange();
                         };
+
                     })(file, i);
                 })
 
         });
+        $imgBox.on('click', '.close', function () {
+            var i = $('.close').index($(this));
+            const img = prevImg[i];
+            if (img.status === 'success') {
+                deleteImg(img.Id)
+                .then(function(){
+                    prevImg.splice(i, 1);
+                    handleImgStatusChange();
+                },function(){
+                    alert('删除失败')
+                })
+            } else {
+                prevImg.splice(i, 1);
+                handleImgStatusChange();
+            }
+        })
         //ajax提交
         $save.on('click', function () {
             var preUpQueue = prevImg.map(function (item, i) {
                 return Object.assign({}, item, { prevImgIndex: i })
             })
             var i = 0;
-            preUpQueue.filter(function (item) {
+
+
+            preUpQueue = preUpQueue.filter(function (item) {
+                console.log(item.status === 'none' || item.status === 'error')
                 if (item.status === 'none' || item.status === 'error') {
                     return true
                 } else {
                     return false
                 }
             });
+            console.log(preUpQueue);
 
 
 
@@ -231,13 +287,13 @@
                     prevImg[preUpQueue[i].prevImgIndex].status = 'uping';
                     handleImgStatusChange();
 
-                    up(preUpQueue[i++])
+                    upImg(preUpQueue[i++].ImgUrl)
                         .then(function () {
                             prevImg[preUpQueue[i - 1].prevImgIndex].status = 'success';
                             handleImgStatusChange();
                             queuq(preUpQueue, i);
                         }, function () {
-                            prevImg[preUpQueue[i - 1].prevImgIndex].status = = 'error';
+                            prevImg[preUpQueue[i - 1].prevImgIndex].status = 'error';
                             handleImgStatusChange();
                             queuq(preUpQueue, i);
                         })

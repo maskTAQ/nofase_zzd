@@ -42,7 +42,6 @@ export default class Login extends Component {
     return api
       .login({ Tel: phone, ExCode: code })
       .then(res => {
-        console.log(res,11)
         AsyncStorage.setItem('mobile', phone)
         this.props.navigation.dispatch(
           action.login(res)

@@ -52,7 +52,6 @@ const post = (
   return new Promise((resolve, reject) => {
     requestWrapper(url, params)
       .then(res => {
-        console.log(res)
         const { data: Data } = res;
         const { code, message, data } = Data;
         loading && Tip.dismiss();
