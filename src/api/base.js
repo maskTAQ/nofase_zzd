@@ -54,6 +54,7 @@ const post = (
       .then(res => {
         const { data: Data } = res;
         const { code, message, data } = Data;
+        console.log(Data,url)
         loading && Tip.dismiss();
         if (code > 0) {
           const d = data || message;

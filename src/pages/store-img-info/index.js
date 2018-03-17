@@ -32,7 +32,7 @@ export default class StoreImgInfo extends Component {
         return (
             <WebView
                 title="店铺认证信息"
-                url={`http://101.200.196.202:8888/html/html/html/store-img/index.html?params=${JSON.stringify(params)}?timestamp=${Date.now}`}
+                url={`http://101.200.196.202:8888/html/html/html/store-img/index.html?params=${JSON.stringify(params)}&timestamp=${Date.now}`}
                 ref={w => (this.webview = w)}
 
             />
