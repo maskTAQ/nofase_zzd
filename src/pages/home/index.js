@@ -149,7 +149,8 @@ export default class Home extends Component {
     );
   }
   renderItem(row) {
-    const { Amont, StoreName, Location, StoreTel, StoreId } = row;
+    console.log(row)
+    const { canPeople, StoreName, Location, StoreTel, StoreId } = row;
     const icon = require("./img/u42.png");
     return (
       <View style={styles.item}>
@@ -186,7 +187,7 @@ export default class Home extends Component {
           </View>
         </View>
         <View style={styles.tagWrapper}>
-          <Text style={styles.tagText}>{Amont}人</Text>
+          <Text style={styles.tagText}>{canPeople}人</Text>
         </View>
       </View>
     );
