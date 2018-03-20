@@ -202,7 +202,7 @@ export default class Home extends Component {
               return true
             }
             const {StoreName,StoreTel} = item;
-            return StoreName.includes(item) || StoreTel.includes(item);
+            return StoreName.includes(searchValue) || StoreTel.includes(searchValue);
           })}
           onRefresh={this.onRefresh}
           refreshing={refreshing}
