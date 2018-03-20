@@ -201,6 +201,7 @@ export default class StoreAdd extends Component {
           BusinessTimes,
           Flag, PeopleNum, Charge, CsTel } = res;
 
+          console.log(StoreType,'StoreType ---')
         const result = {
           base: {
             StoreId: Id,

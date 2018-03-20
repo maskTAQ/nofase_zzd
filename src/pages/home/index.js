@@ -149,7 +149,6 @@ export default class Home extends Component {
     );
   }
   renderItem(row) {
-    console.log(row)
     const { canPeople, StoreName, Location, StoreTel, StoreId } = row;
     const icon = require("./img/u42.png");
     return (
