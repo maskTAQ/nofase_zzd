@@ -60,7 +60,7 @@ export default {
     marginTop:20,
   },
   startTimeButton: {
-    flex:1,
+    width: "40%",
     justifyContent:"center",
     borderRadius: 5,
     height: 40,
@@ -71,6 +71,7 @@ export default {
     marginRight:10,
   },
   endTimeButton:{
+    width: "40%",
     justifyContent:"center",
     borderRadius: 5,
     height: 40,

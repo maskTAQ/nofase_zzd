@@ -128,7 +128,7 @@ export default class Timetable extends Component {
       {
         title: "时间",
         dataIndex: "STime",
-        render: (row, value, index) => {
+        render: (row, value,fiedIndex, index) => {
           const { STime, ETime } = row;
           let label = '';
           
