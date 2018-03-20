@@ -30,7 +30,7 @@ export default {
     },
     input:{
         flex:1,
-       
+        color:'#000',
     },
     button:{
         margin:15,

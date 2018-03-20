@@ -34,7 +34,6 @@ export default {
   //更新店铺
   updateStore(params) {
     const { StoreId } = params;
-    console.log(params,13123)
     const url = StoreId ? '/Store/EditStore' : 'Store/SaveStore';
     return post(url, params);
   },

@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 import api from 'src/api';
 import action from "src/action";
-import { Page, Input, Button } from "src/components";
+import { Page, Input, Button, Picker } from "src/components";
 import styles from "./style";
 
 @connect(state => {
@@ -19,9 +19,10 @@ export default class StoreBaseInfo extends Component {
     static propTypes = {
         navigation: PropTypes.object,
         newStoreInfo: PropTypes.object,
-        AdminId: PropTypes.number
+        AdminId: PropTypes.number,
     };
     state = {
+        isPickerVisible: false,
         data: [
             { label: '店铺全称', key: 'StoreName', value: '' },
             { label: '店铺号码', key: 'StoreTel', value: '' },
@@ -78,7 +79,6 @@ export default class StoreBaseInfo extends Component {
             }
 
         });
-        console.log(result)
         return result;
     }
     add = () => {
@@ -99,10 +99,19 @@ export default class StoreBaseInfo extends Component {
 
 
     }
+    onStoreTypeChange = (v) => {
+        const nextData = Object.assign([], this.state.data);
+        nextData[2].value = v;
+        this.setState({
+            data: nextData,
+            isPickerVisible: false
+        });
+
+    }
     render() {
-        const { data } = this.state;
+        const { data, isPickerVisible } = this.state;
         const { StoreId } = this.props.newStoreInfo.base;
-        
+
         const buttonLabel = StoreId ? '编辑店铺' : '创建店铺';
         return (
             <Page title="店铺基本信息">
@@ -114,6 +123,23 @@ export default class StoreBaseInfo extends Component {
                                 return (
                                     <View style={styles.itemLine} key={key}>
 
+                                    </View>
+                                )
+                            }
+                            if (key === 'StoreType') {
+                                console.log(value, '[]')
+                                return (
+                                    <View style={styles.item} key={key}>
+                                        <View style={styles.itemLabel}>
+                                            <Text style={styles.itemLabelText}>{label}:</Text>
+                                        </View>
+                                        <Button onPress={() => {
+                                            this.setState({
+                                                isPickerVisible: true
+                                            })
+                                        }} style={[styles.itemValue, { justifyContent: 'flex-end', }]} textStyle={styles.input}>
+                                            {['', '个体户', '企业', '连锁'][value]}
+                                        </Button>
                                     </View>
                                 )
                             }
@@ -130,6 +156,18 @@ export default class StoreBaseInfo extends Component {
                         })
                     }
                     <Button onPress={this.add} style={styles.button}>{buttonLabel}</Button>
+                    <Picker
+                        data={[
+                            { value: 1, label: '个体户' },
+                            { value: 2, label: '企业' },
+                            { value: 3, label: '连锁' }
+                        ]}
+                        onValueSelect={this.onStoreTypeChange}
+                        visible={isPickerVisible}
+                        onRequestClose={() => {
+                            this.setState({ isPickerVisible: false })
+                        }}
+                    />
                 </View>
             </Page>
         )
