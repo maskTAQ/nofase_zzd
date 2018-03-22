@@ -18,6 +18,17 @@ const appReducer = combineReducers({
     if (type === actionMap.EDIT_STORE_INFO) {
       return { ...state, ...payload }
     }
+    if (type === actionMap.RESET_STORE_INFO) {
+
+      return {
+        base: {},
+        bank: {},
+        hour: {},
+        deviceManage: {},
+        timetable: [],
+        StoreRemarks: ''
+      }
+    }
     return state;
   },
   ...CreateReduxField().reducers()

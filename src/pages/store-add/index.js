@@ -201,7 +201,6 @@ export default class StoreAdd extends Component {
           BusinessTimes,
           Flag, PeopleNum, Charge, CsTel } = res;
 
-          console.log(StoreType,'StoreType ---')
         const result = {
           base: {
             StoreId: Id,
@@ -333,10 +332,10 @@ export default class StoreAdd extends Component {
     const { base, hour, bank, timetable, StoreRemarks } = this.props.newStoreInfo;
     const data = [].concat(topListData, bottomListData);
 
-    if (!base) {
+    if (!base.StoreId) {
       return Tip.fail('请先填写店铺基本信息');
     }
-    if (!bank) {
+    if (!bank.CardNo) {
       return Tip.fail('请先认证银行卡信息');
     }
 
@@ -362,6 +361,10 @@ export default class StoreAdd extends Component {
     return api.updateStore(params)
       .then(res => {
         Tip.success('店铺数据录入成功');
+        //清空redux中数据缓存
+        this.props.navigation.dispatch(
+          action.resetStoreInfo()
+        );
         setTimeout(() => {
           this.props.navigation.dispatch(
             action.navigate.go({ routeName: "Home" })

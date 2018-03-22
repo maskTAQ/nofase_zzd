@@ -4,6 +4,7 @@ const NAVIGATE_TAb_GO = "NAVIGATE_TAb_GO";
 
 const LOGIN = 'LOGIN';
 const EDIT_STORE_INFO = 'EDIT_STORE_INFO';
+const RESET_STORE_INFO = 'RESET_STORE_INFO';
 const action = {
   navigate: {
     go({ routeName, params = {} }) {
@@ -42,6 +43,12 @@ const action = {
       payload
     };
   },
+  resetStoreInfo() {
+    return {
+      type: RESET_STORE_INFO
+    };
+  },
+  RESET_STORE_INFO,
   EDIT_STORE_INFO,
   login(payload){
     return {
