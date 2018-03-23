@@ -68,18 +68,35 @@ export default class BusinessHours extends Component {
     Flag: 1 //1营业 2未营业
   };
   componentWillMount() {
-    const { Flag,  BusinessTimes } = this.props.newStoreInfo.hour;
-    //const weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    if (Flag) {
+    const { Flag, BusinessTimes, BusinessWeeks } = this.props.newStoreInfo.hour;
+    //根据BusinessTimes判断hour中是否存在数据
+    if (BusinessTimes) {
       const time = BusinessTimes.split('-');
       this.setState({
         Flag,
         startTime: time[0],
         endTime: time[0]
-      })
+      });
+      this.setWeekValue();
     }
 
     //console.log(BusinessWeeks)
+  }
+  setWeekValue(BusinessWeeks) {
+    const h = BusinessWeeks[0];
+    const e = BusinessWeeks[BusinessWeeks.length - 1];
+
+    let startWeekValue, endWeekValue;
+    if (Number(n) === 0) {
+      endWeekValue = h;
+      startWeekValue = e;
+    }else{
+      startWeekValue = h;
+      endWeekValue = e;
+    }
+    this.setState({
+      startWeekValue, endWeekValue
+    });
   }
   componentWillReceiveProps(nextProps) {
     const { hour } = nextProps.newStoreInfo;
@@ -136,23 +153,35 @@ export default class BusinessHours extends Component {
   computWeekRangeStr() {
     let { startWeekValue } = this.state;
     const { endWeekValue } = this.state;
-    const l = endWeekValue - startWeekValue + 1;
-    const a = new Array(l);
+    const st = startWeekValue ? startWeekValue : 7;
+    const et = endWeekValue ? endWeekValue : 7;
 
-    a.fill(0);
-    const BusinessWeeks = a
-      .map(item => {
-        return startWeekValue++;
-      })
-      .join(",");
-    return BusinessWeeks;
+    if (et < st) {
+      Tip.fail('结束日不能大于开始日哦');
+      return
+    }
+    if (et === st) {
+      Tip.fail('结束日不能等于开始日哦');
+      return
+    }
+
+    const result = [];
+    const l = et - st + 1;
+    for (let i = 0; i < l; i++) {
+      const n = s + i;
+      if (n === 7) {
+        result.unshift('0')
+      } else {
+        result.push(n);
+      }
+    }
+    return result.join('');
   }
   save = () => {
     const { Flag, startTime, endTime } = this.state;
-    //let {startWeekValue,endWeekValue} = this.state;
     const isHasInitTime = startTime.includes(":") && endTime.includes(":");
 
-    
+
     if (!isHasInitTime) {
       Tip.fail("请选择时间");
     } else {
