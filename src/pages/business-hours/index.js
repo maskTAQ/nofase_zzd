@@ -175,7 +175,7 @@ export default class BusinessHours extends Component {
         result.push(n);
       }
     }
-    return result.join('');
+    return result.join(',');
   }
   save = () => {
     const { Flag, startTime, endTime } = this.state;
