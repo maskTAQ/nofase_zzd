@@ -198,12 +198,15 @@ export default class Home extends Component {
       <View style={styles.list}>
         <FlatList
           data={data.filter(item=>{
+            console.log(item)
             if(!searchValue){
               return true
             }
             const {StoreName,StoreTel} = item;
             return StoreName.includes(searchValue) || StoreTel.includes(searchValue);
-          })}
+          }).sort((prev,next)=>{
+            return  next.StoreId -prev.StoreId 
+          })} 
           onRefresh={this.onRefresh}
           refreshing={refreshing}
           ListEmptyComponent={<Text style={styles.noData}>暂时没有数据哦!</Text>}

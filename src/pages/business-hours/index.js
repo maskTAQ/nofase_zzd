@@ -170,7 +170,7 @@ export default class BusinessHours extends Component {
     for (let i = 0; i < l; i++) {
       const n = s + i;
       if (n === 7) {
-        result.unshift('0')
+        result.push('0')
       } else {
         result.push(n);
       }
