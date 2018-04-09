@@ -25,8 +25,8 @@ export default {
     form: {
         marginTop: 40,
         width: "100%",
-        paddingLeft: 60,
-        paddingRight: 60
+        paddingLeft: 20,
+        paddingRight: 20
     },
     formItem: {
         marginTop: 12,

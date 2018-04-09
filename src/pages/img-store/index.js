@@ -3,13 +3,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import {baseURL} from 'src/config';
+import { baseURL } from 'src/config';
 import { WebView } from "src/components";
 
 @connect(state => {
     const { newStoreInfo } = state;
     return { newStoreInfo };
-  })
+})
 export default class ImgStore extends Component {
     static defaultProps = {
 
@@ -28,12 +28,12 @@ export default class ImgStore extends Component {
         const params = {
             AdminId,
             StoreId,
-            url:`${baseURL}/Store/EditStore`
+            url: `${baseURL}/Store/EditStore`
         };
         return (
             <WebView
                 title="店铺图库"
-                url={`http://101.200.196.202:8888/html/html/html/img-store/html/index.html?params=${JSON.stringify(params)}&timestamp=${Date.now}`}
+                url={`${baseURL}/webview/img-store/index.html?params=${JSON.stringify(params)}&timestamp=${Date.now}`}
                 ref={w => (this.webview = w)}
 
             />

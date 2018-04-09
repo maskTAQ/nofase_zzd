@@ -85,6 +85,13 @@ class App extends Component {
       }
       return true;
     }
+    // //如果从StoreAdd返回 重置存储的编辑信息
+    // if (routeName === 'StoreAdd') {
+    //   this.props.navigation.dispatch(
+    //     action.resetStoreInfo()
+    //   )
+    //   return true
+    // }
     return false;
   };
   render() {

@@ -68,39 +68,25 @@ export default class BusinessHours extends Component {
     Flag: 1 //1营业 2未营业
   };
   componentWillMount() {
-    const { Flag, BusinessTimes, BusinessWeeks } = this.props.newStoreInfo.hour;
-    //根据BusinessTimes判断hour中是否存在数据
-    if (BusinessTimes) {
-      const time = BusinessTimes.split('-');
-      this.setState({
-        Flag,
-        startTime: time[0],
-        endTime: time[0]
-      });
-      this.setWeekValue();
-    }
+    const { Flag, BusinessTimes, BusinessWeeks = "1,0" } = this.props.newStoreInfo.hour;
+    const weeks = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+    const time = BusinessTimes
+      ? BusinessTimes.split("-")
+      : ["请选择开始时间", "请选择结束时间"];
+    this.setState({
+      Flag,
+      startTime: time[0],
+      endTime: time[1],
+      startWeekValue: BusinessWeeks[0],
+      startWeek: weeks[BusinessWeeks[0]],
+      endWeekValue: BusinessWeeks[BusinessWeeks.length - 1],
+      endWeek: weeks[BusinessWeeks[BusinessWeeks.length - 1]]
+    });
 
     //console.log(BusinessWeeks)
   }
-  setWeekValue(BusinessWeeks) {
-    const h = BusinessWeeks[0];
-    const e = BusinessWeeks[BusinessWeeks.length - 1];
-
-    let startWeekValue, endWeekValue;
-    if (Number(n) === 0) {
-      endWeekValue = h;
-      startWeekValue = e;
-    }else{
-      startWeekValue = h;
-      endWeekValue = e;
-    }
-    this.setState({
-      startWeekValue, endWeekValue
-    });
-  }
   componentWillReceiveProps(nextProps) {
     const { hour } = nextProps.newStoreInfo;
-    console.log(hour, 99)
     this.setState({ ...hour })
   }
   store = {
@@ -151,31 +137,19 @@ export default class BusinessHours extends Component {
     });
   };
   computWeekRangeStr() {
-    let { startWeekValue } = this.state;
-    const { endWeekValue } = this.state;
-    const st = startWeekValue ? startWeekValue : 7;
-    const et = endWeekValue ? endWeekValue : 7;
+    //let { startWeekValue } = this.state;
+    const { startWeekValue, endWeekValue } = this.state;
+    return `${startWeekValue},${endWeekValue}`;
+    // const l = endWeekValue - startWeekValue + 1;
+    // const a = new Array(l);
 
-    if (et < st) {
-      Tip.fail('结束日不能大于开始日哦');
-      return
-    }
-    if (et === st) {
-      Tip.fail('结束日不能等于开始日哦');
-      return
-    }
-
-    const result = [];
-    const l = et - st + 1;
-    for (let i = 0; i < l; i++) {
-      const n = s + i;
-      if (n === 7) {
-        result.push('0')
-      } else {
-        result.push(n);
-      }
-    }
-    return result.join(',');
+    // a.fill(0);
+    // const BusinessWeeks = a
+    //   .map(item => {
+    //     return startWeekValue++;
+    //   })
+    //   .join(",");
+    // return BusinessWeeks;
   }
   save = () => {
     const { Flag, startTime, endTime } = this.state;

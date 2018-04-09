@@ -104,8 +104,8 @@ export default class StoreAdd extends Component {
             );
           })
         },
-        { label: "容纳人数", value: "45", key: 'PeopleNum', unit: '人' },
-        { label: "收费标准", value: "15", key: 'Charge', unit: '/小时' }
+        { label: "容纳人数", value: "", key: 'PeopleNum', unit: '人' },
+        { label: "收费标准", value: "", key: 'Charge', unit: '/小时' }
       ],
       bottomListData: [
         {
@@ -155,7 +155,7 @@ export default class StoreAdd extends Component {
         {
           label: "客服电话",
           key: 'CsTel',
-          value: "10477-5666666"
+          value: ""
         }
       ]
     };
@@ -430,14 +430,7 @@ export default class StoreAdd extends Component {
                 {
                   text: '返回', onPress: () => {
                     this.props.navigation.dispatch(
-                      action.editStoreInfo({
-                        base: {},
-                        bank: {},
-                        hour: {},
-                        deviceManage: {},
-                        timetable: [],
-                        StoreRemarks: ''
-                      })
+                      action.resetStoreInfo()
                     )
                     this.props.dispatch(action.navigate.back());
                   }, style: 'cancel'
