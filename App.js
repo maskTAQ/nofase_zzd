@@ -17,7 +17,7 @@ import store from 'src/store';
 import { Tip } from 'src/components';
 import action from "src/action";
 import api from "src/api";
-import { EventHub, CreateReduxField } from "src/common";
+
 
 class App extends Component {
   static propTypes = {
