@@ -48,31 +48,39 @@ const post = (
   params = {},
   { loading = true, handleCatch = true } = {}
 ) => {
+
   loading && Tip.loading();
   return new Promise((resolve, reject) => {
     requestWrapper(url, params)
       .then(res => {
         const { data: Data } = res;
         const { code, message, data } = Data;
-        console.log(Data,url)
         loading && Tip.dismiss();
         if (code > 0) {
           const d = data || message;
           return resolve(d);
         } else {
+          console.log("------ start -------");
+          console.log("error:", message);
+          console.log("地址:" + url);
+          console.log("参数:", params);
+          console.log("------ end -------");
           Tip.fail(`error:${message}`);
           return reject(message);
         }
       })
       .catch(e => {
-        console.log(e, url,params);
+        console.log("------ start -------");
+        console.log("error:", e);
+        console.log("地址:" + url);
+        console.log("参数:", params);
+        console.log("------ end -------");
         loading && Tip.dismiss();
         if (handleCatch) {
-           Tip.fail(`error:${String(e)}`);
+          Tip.fail(`error:${String(e)}`);
         }
         return reject(String(e));
       });
-  })
-
+  });
 };
 export { post };

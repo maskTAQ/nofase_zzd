@@ -19,7 +19,6 @@ class Dragable {
       },
       config
     );
-    console.log(width, styles.container.padding);
   }
   button = {
     start: null,
@@ -39,7 +38,7 @@ class Dragable {
       listenner: { barChange }
     } = this;
     const ratio = (type === "start" ? startIndex : endIndex) / nodeCount;
-    const left = ratio * (screen.width - width);
+    const left = ratio * (screen.width - 20 - width); //这里的20是轨道距离边框的宽度
     this.button[type] = ref;
     ref.setNativeProps({
       style: { left }
@@ -55,16 +54,22 @@ class Dragable {
   }
   isCanMove(left) {
     const { screen, buttonStyle, button, currentControlButton } = this;
+    const pathwayMargin = 10;
+
     if (currentControlButton === "start" && left > button.end.left) {
       return false;
     }
     if (
       currentControlButton === "end" &&
-      button.start.left + buttonStyle.width > left
+      button.start.left > left - buttonStyle.width * 2
     ) {
       return false;
     }
-    return left > 0 && left < screen.width - buttonStyle.width;
+    //将拖动幅度限制在轨道内
+    return (
+      left > pathwayMargin + buttonStyle.width / 2 &&
+      left < screen.width - pathwayMargin - buttonStyle.width / 2
+    );
   }
   calculateNodeIndex() {
     const { screen, buttonStyle, button } = this;
@@ -126,7 +131,8 @@ export default class TimeSlideChoose extends Component {
   };
   static propTypes = {
     startIndex: PropTypes.number,
-    endIndex: PropTypes.number
+    endIndex: PropTypes.number,
+    onDayChange: PropTypes.func
   };
   state = {
     barStyle: {
@@ -135,11 +141,10 @@ export default class TimeSlideChoose extends Component {
     }
   };
   componentWillMount() {
-    this.setState({ ...this.props });
-
+    const { startIndex, endIndex, onDayChange } = this.props;
     this.dragable = new Dragable({
-      startIndex: 1,
-      endIndex: 2,
+      startIndex,
+      endIndex,
       nodeCount: 5,
       buttonStyle: styles.circle,
       listenner: {
@@ -149,15 +154,23 @@ export default class TimeSlideChoose extends Component {
           });
         },
         nodeChange(a) {
-          // console.log(a)
+          onDayChange(a);
         }
       }
     });
   }
 
-  config = {
-    nodeCount: 5
-  };
+  componentWillReceiveProps(nextProps) {
+    const { startIndex: nextStartIndex, endIndex: nextEndIndex } = nextProps;
+    const { startIndex, endIndex } = this.props;
+    if (startIndex !== nextStartIndex) {
+      this.dragable.startIndex = nextStartIndex;
+    }
+    if (endIndex !== nextEndIndex) {
+      this.dragable.endIndex = nextEndIndex;
+    }
+  }
+
   calculateBarLocation({ left, right }) {}
   render() {
     const { barStyle } = this.state;

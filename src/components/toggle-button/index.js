@@ -20,8 +20,8 @@ export default class ToggleButton extends Component {
       status: this.state.status === "unfold" ? "packUp" : "unfold"
     });
   };
-  user = () => {
-    this.props.dispatch(action.navigate.go({ routeName: "User" }));
+  go = routeName => {
+    this.props.dispatch(action.navigate.go({ routeName }));
   };
   render() {
     const arrow = {
@@ -29,7 +29,7 @@ export default class ToggleButton extends Component {
       packUp: "270deg"
     };
     const bottom = {
-      unfold: 0,
+      unfold: -12,
       packUp: -80
     };
     const { status } = this.state;
@@ -49,13 +49,13 @@ export default class ToggleButton extends Component {
             />
           </Button>
           <View style={styles.buttonGroup}>
-            <Button onPress={this.user}>
+            <Button onPress={() => this.go("User")}>
               <Icon size={36} source={require("./img/user.png")} />
             </Button>
-            <Button>
+            <Button onPress={() => this.go("Pay")}>
               <Icon size={60} source={require("./img/code.png")} />
             </Button>
-            <Button>
+            <Button onPress={() => this.go("Activity")}>
               <Icon size={36} source={require("./img/run.png")} />
             </Button>
           </View>

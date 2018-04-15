@@ -30,6 +30,7 @@ export default class DataView extends Component {
   };
   static propTypes = {
     getData: PropTypes.func,
+    keyExtractor: PropTypes.func,
     dataSource: PropTypes.array,
     isPulldownLoadMore: PropTypes.bool,
     isPullupRefresh: PropTypes.bool,
@@ -172,11 +173,10 @@ export default class DataView extends Component {
     const now = Date.now();
 
     if (now - this.prevCalledPulldownLoadMoreTimes > pulldownLoadMoreInterval) {
-      console.log(y, height, contentHeight);
       //在y轴偏移度加上高度等于内容的高度并且y轴偏移值为正值时
       //？在android下并不会像ios有默认的缓动区域 所以并不能产生 在y轴偏移度加上高度大于内容的高度 的情况
       //>= 大于适用于ios ===适用于android
-      if (y + height >= contentHeight && y > 0) {
+      if (y + height >= contentHeight - 5 && y >= 0) {
         this.prevCalledPulldownLoadMoreTimes = now;
         this.pulldownLoadMore();
       }
@@ -184,6 +184,7 @@ export default class DataView extends Component {
   };
   renderFooter = () => {
     const { isLoadingMore, loaded, dataSource, refreshing } = this.state;
+    const {isPulldownLoadMore} = this.props;
     let footerContent;
     switch (true) {
       case isLoadingMore:
@@ -211,6 +212,8 @@ export default class DataView extends Component {
       case dataSource.length === 0:
         footerContent = null;
         break;
+      case !isPulldownLoadMore:
+      return null;
       default:
         footerContent = <Text style={styles.text}>下拉加载更多</Text>;
     }
@@ -223,7 +226,8 @@ export default class DataView extends Component {
       ItemSeparatorComponent,
       renderItem,
       isPulldownLoadMore,
-      isPullupRefresh
+      isPullupRefresh,
+      keyExtractor
     } = this.props;
     const hint = [];
     isPulldownLoadMore && hint.push("下拉");
@@ -235,7 +239,7 @@ export default class DataView extends Component {
           style={[{ flex: 1 }, this.props.style]}
           onRefresh={this.onRefresh}
           refreshing={refreshing}
-          keyExtractor={(row, i) => i}
+          keyExtractor={keyExtractor || ((row, i) => i)}
           renderItem={renderItem}
           ItemSeparatorComponent={ItemSeparatorComponent}
           ListEmptyComponent={({ item }) => {

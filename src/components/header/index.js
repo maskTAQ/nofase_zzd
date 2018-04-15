@@ -46,7 +46,7 @@ export default class Header extends Component {
   state = {};
   render() {
     const {
-      //onLeftPress,
+      onLeftPress,
       LeftComponent,
       RightComponent,
       titleComponent,
@@ -72,10 +72,16 @@ export default class Header extends Component {
           <View style={styles.item}>
             {LeftComponent ||
               Left(function() {
-                dispatch(action.navigate.back());
+                if (onLeftPress) {
+                  onLeftPress();
+                } else {
+                  dispatch(action.navigate.back());
+                }
               })}
           </View>
-          <View style={styles.title}>{titleComponent ||renderTitle(title, titleStyle)}</View>
+          <View style={styles.title}>
+            {titleComponent || renderTitle(title, titleStyle)}
+          </View>
           <View style={styles.item}>{RightComponent}</View>
         </View>
       </View>

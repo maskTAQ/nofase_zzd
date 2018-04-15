@@ -19,10 +19,22 @@ const renderChildren = (children, textStyle, disabled) => {
     </Text>
   );
 };
-const Button = ({ children, style, onPress, textStyle, disabled = false,disabledStyle }) => {
+const Button = ({
+  children,
+  style,
+  onPress,
+  textStyle,
+  disabled = false,
+  disabledStyle
+}) => {
   return (
     <TouchableOpacity
-      style={[style, disabled ? Object.assign({ backgroundColor: "#ccc" },disabledStyle) : null]}
+      style={[
+        style,
+        disabled
+          ? Object.assign({ backgroundColor: "#ccc" }, disabledStyle)
+          : null
+      ]}
       onPress={onPress}
       disabled={disabled}
     >
@@ -37,7 +49,7 @@ Button.propTypes = {
   onPress: PropTypes.func,
   textStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   disabled: PropTypes.bool,
-  disabledStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  disabledStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array])
 };
 
 export default Button;

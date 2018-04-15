@@ -37,6 +37,18 @@ export default {
     const url = StoreId ? '/Store/EditStore' : 'Store/SaveStore';
     return post(url, params);
   },
+  //获取管理员列表
+  getAdminList(AdminId) {
+    return post("/Admin/GetAdminInfoList", { AdminId },{loading:false});
+  },
+  //获取管理员详情 
+  getAdminInfo(AdminId) {
+    return post("/Admin/GetAdminInfo", { AdminId });
+  },
+  //新建管理员
+  addAdmin(params) {
+    return post("/Admin/SaveAdmin", params, { handleCatch: false });
+  },
   //获取店铺信息
   getStoreInfo({ Need, StoreId, AdminId }) {
     return post("/Store/GetStoreInfoByNeed", { Need, StoreId, AdminId });
@@ -50,8 +62,9 @@ export default {
     return post("/Store/GetBankInfo", { StoreId });
   },
   //获取店铺列表 GetStoreUserListByDateTest
-  getStoreList(loading) {
-    return post("/Admin/GetStoreUserListByDateTest", {}, { loading });
+  getStoreList(params) {
+    console.log(params)
+    return post("/Admin/GetStoreListBySeach", { params }, { loading: false });
   },
   //保存课程表
   saveCurriculum({ CurrJson, StoreId }) {

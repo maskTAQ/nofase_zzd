@@ -60,7 +60,11 @@ export default class Picker extends Component {
                   );
                 })}
               </View>
-              <Button onPress={this.cancel} style={styles.cancel} textStyle={styles.itemLabel}>
+              <Button
+                onPress={this.cancel}
+                style={styles.cancel}
+                textStyle={styles.itemLabel}
+              >
                 取消
               </Button>
             </View>

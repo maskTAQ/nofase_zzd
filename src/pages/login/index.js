@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, Image, Animated, AsyncStorage } from "react-native";
+import { View, Text, Image,StatusBar, AsyncStorage } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 import styles from "./style";
-import { Input, Button, ShareModal, CodeButton } from "src/components";
+import { Input, Button, CodeButton } from "src/components";
 import action from "src/action";
 import api from "src/api";
 import { Tip } from "src/common";
@@ -17,8 +17,6 @@ export default class Login extends Component {
   state = {
     phone: "",
     code: "",
-    isBgVisible: true,
-    viewMarginTop: new Animated.Value(0),
   };
   componentWillMount() {
     AsyncStorage.getItem('mobile', (e, m) => {
@@ -51,7 +49,7 @@ export default class Login extends Component {
         );
       })
       .catch(e => {
-        console.log(e,1)
+        console.log(e, 1)
         Tip.fail(e);
       });
   };
@@ -64,7 +62,12 @@ export default class Login extends Component {
   render() {
     const { phone, code } = this.state;
     return (
-      <Animated.View style={[styles.container, { marginBottom: this.state.viewMarginTop }]}>
+      <View style={[styles.container]}>
+        <StatusBar
+          backgroundColor="#1a98e0"
+          translucent={true}
+          barStyle="light-content"
+        />
         <View style={styles.logo}>
           <Image
             source={require("src/images/login/logo.png")}
@@ -86,16 +89,7 @@ export default class Login extends Component {
               style={styles.formItemInput}
               placeholder="手机号"
               placeholderTextColor="#fff"
-            // onFocus={() => {
-            //   this.setState({
-            //     isBgVisible: false
-            //   })
-            // }}
-            // onBlur={() => {
-            //   this.setState({
-            //     isBgVisible: true
-            //   })
-            // }}
+
             />
           </View>
           <View style={styles.formItem}>
@@ -110,16 +104,7 @@ export default class Login extends Component {
               }}
               style={styles.formItemInput}
               placeholder="密码"
-              // onFocus={() => {
-              //   this.setState({
-              //     isBgVisible: false
-              //   })
-              // }}
-              // onBlur={() => {
-              //   this.setState({
-              //     isBgVisible: true
-              //   })
-              // }}
+
               placeholderTextColor="#fff"
             />
             <CodeButton ref={e => (this.codeRef = e)} phone={phone}>
@@ -138,20 +123,8 @@ export default class Login extends Component {
         </View>
 
 
-        <ShareModal
-          isVisible={false}
-          username="上都牧人"
-          time="01:48:08"
-          sum={32.0}
-          discount={8}
-          storeName="海里恩健身俱乐部"
-          onlinePeople={20}
-          addr="深南大道与前海教会处振业星海商业广场31"
-          close={() => { }}
-        >
-          <Text>12</Text>
-        </ShareModal>
-      </Animated.View>
+        
+      </View>
     );
   }
 }

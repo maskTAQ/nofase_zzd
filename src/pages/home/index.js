@@ -1,128 +1,128 @@
 import React, { Component } from "react";
-import { View, Text, FlatList, Linking } from "react-native";
+import { View, Text, Linking } from "react-native";
 import moment from "moment";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import { Tip } from 'src/common';
+import { citys } from 'src/config';
 import api from 'src/api';
 import action from "src/action";
-import { EventHub } from "src/common";
-import { Header, Button, Icon, Input, Picker } from "src/components";
+
+import { Header, Button, Icon, Input, Picker, DataView } from "src/components";
 import styles from "./style";
 
 
 @connect(state => {
-  const { adminAddressList, adminAddressInfo, storeBusInfoByDate } = state;
-  return { adminAddressList, adminAddressInfo, storeBusInfoByDate };
+  const { adminAddressList, adminAddressInfo, storeBusInfoByDate, auth } = state;
+  return { adminAddressList, adminAddressInfo, storeBusInfoByDate, auth };
 })
 export default class Home extends Component {
   static defaultProps = {};
   static propTypes = {
-    navigation: PropTypes.object
+    navigation: PropTypes.object,
+    auth: PropTypes.object,
   };
   state = {
     activeAddrIndex: 0,
     isPickerVisible: false,
-    data: [],
-    searchValue:'',
-    refreshing:false
+    searchValue: '',
+    Amont: '-',
+    InPeople: '-',
   };
-
   componentWillMount() {
 
-    // EventHub.emit("dispatch", "getAdminAddressList", "adminAddressList");
-    // EventHub.emit("dispatch", "getAdminAddressInfo", "adminAddressInfo");
-    //this.getStoreBusInfoByDate();
-    this.getData(true);
+    this.getStoreBusInfoByDate()
   }
-  getData(isLoading) {
-    // console.log(isLoading)
-    // if(isLoading){
-    //   Tip.loading('加载店铺中...');
-    // }
-    return this.props.dispatch(
-      {
-        type: 'STORELIST',
-        api: () => {
-          return api.getStoreList(isLoading)
-        },
-        promise: true
-      }
-    )
-      .then(data => {
-        this.setState({
-          data
-        })
-      })
-      .catch(e => {
-        Tip.loading('加载店铺失败');
-        console.log('e:reject', e);
+  dateParams = {
+    SDate: moment().format("YYYY/MM/DD"),
+    EDate: moment().format("YYYY/MM/DD")
+  };
+  storeAddrList = citys;
+  getStoreList = (PageIndex) => {
+    const { activeAddrIndex, searchValue } = this.state;
+    return api.getStoreList({
+      UserArea: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
+      PageIndex,
+      PageNum: 20,
+      SeachValue: searchValue
+    })
+      .then(res => {
+        console.log(res);
+        return res;
       })
   }
-  storeAddrList = [
-    { label: '广东省-深圳市-南山区', value: '0' },
-    { label: '广东省-深圳市-罗湖区', value: '1' },
-    { label: '广东省-深圳市-大鹏新区', value: '2' }
-  ];
   getStoreBusInfoByDate() {
     const { activeAddrIndex } = this.state;
-    EventHub.emit("dispatch", "getStoreBusInfoByDate", "storeBusInfoByDate", {
+    api.getStoreBusInfoByDate({
       Address: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
-      SDate: moment().format("YYYY-MM-DD 00:00"),
-      EDates: moment().format("YYYY-MM-DD 23:59"),
-    });
+      ...this.dateParams
+    })
+      .then(res => {
+        this.setState({ ...res });
+      })
   }
   onAddrChange = (value) => {
     this.setState({
       activeAddrIndex: value,
       isPickerVisible: false
+    }, () => {
+      console.log(this.list)
+      this.list.triggerRefresh()
     })
   }
-  onRefresh=()=>{
-    this.setState({refreshing:true});
-    this.getData(false)
-    .then(res=>{
-      this.setState({refreshing:false});
-    })
+
+  search = () => {
+    this.list.triggerRefresh();
+
   }
   renderHeader() {
-    const { activeAddrIndex } = this.state;
+    const { activeAddrIndex, Amont, InPeople } = this.state;
+    const { AdminLevel } = this.props.auth;
+
+    let headerProps = {};
+    if (AdminLevel === 1) {
+      headerProps = {
+        LeftComponent: (<Button onPress={() => {
+          this.props.navigation.dispatch(
+            action.navigate.go({ routeName: "SubAdmin" })
+          );
+        }} textStyle={{ fontWeight: "bold" }}>分站端</Button>),
+        RightComponent: (
+          <Button onPress={() => {
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "StoreAdd" })
+            );
+          }}>
+            <Icon size={30} source={require("./img/u21.png")} />
+          </Button>
+        ),
+        titleComponent: (
+          <Button onPress={() => {
+            this.setState({
+              isPickerVisible: true
+            })
+          }} style={styles.titleBox}>
+            <Text style={styles.titleText}>{this.storeAddrList[activeAddrIndex].label}</Text>
+            <Icon style={styles.titleIcon} size={20} source={require('./img/u305.png')} />
+          </Button>
+        )
+      };
+    }
     return (
       <View style={styles.header}>
         <Header
           style={{ backgroundColor: styles.header.backgroundColor }}
-          LeftComponent={
-            <Button onPress={() => {
-              this.props.navigation.dispatch(
-                action.navigate.go({ routeName: "SubAdmin" })
-              );
-            }} textStyle={{ fontWeight: "bold" }}>分站端</Button>
-          }
-          RightComponent={
-            <Button onPress={() => {
-              this.props.navigation.dispatch(
-                action.navigate.go({ routeName: "StoreAdd" })
-              );
-            }}>
-              <Icon size={30} source={require("./img/u21.png")} />
-            </Button>
-          }
-          titleComponent={
-            <Button onPress={() => {
-              this.setState({
-                isPickerVisible: true
-              })
-            }} style={styles.titleBox}>
-              <Text style={styles.titleText}>{this.storeAddrList[activeAddrIndex].label}</Text>
-              <Icon style={styles.titleIcon} size={20} source={require('./img/u305.png')} />
-            </Button>
-          }
+          {...headerProps}
         />
-        <Text style={styles.consume}>今日营业额 15256.51 元，消费用户</Text>
-        <Text style={styles.subTitle}>152 人/次</Text>
+        <Text style={styles.consume}>今日营业额 {Amont} 元，消费用户</Text>
+        <Text style={styles.subTitle}>{InPeople} 人/次</Text>
         <View style={styles.calendarWrapper}>
-          <Button onPress={this.showPicker}>
+          <Button onPress={() => {
+            //
+            this.props.navigation.dispatch(
+              action.navigate.go({ routeName: "HistoryConsume" })
+            );
+          }}>
             <Icon size={30} source={require("./img/u85.png")} />
           </Button>
         </View>
@@ -130,18 +130,18 @@ export default class Home extends Component {
     );
   }
   renderSearch() {
-    const {searchValue} = this.state;
+    const { searchValue } = this.state;
     return (
       <View style={styles.search}>
         <View style={styles.searchBox}>
           <Input
             value={searchValue}
-            onChangeText={v=>this.setState({searchValue:v})}
+            onChangeText={v => this.setState({ searchValue: v })}
             placeholder="店铺名称/手机号码搜索"
             style={styles.searchInput}
           />
           <View style={styles.searchBorder} />
-          <Button style={styles.searchButton}>
+          <Button onPress={this.search} style={styles.searchButton}>
             <Icon size={30} source={require("./img/u15.png")} />
           </Button>
         </View>
@@ -170,7 +170,7 @@ export default class Home extends Component {
                 <Button
                   onPress={() => {
                     this.props.navigation.dispatch(
-                      action.navigate.go({ routeName: "StoreAdd",params:{StoreId} })
+                      action.navigate.go({ routeName: "StoreAdd", params: { StoreId } })
                     );
                   }}
                   style={styles.editButton}
@@ -192,28 +192,18 @@ export default class Home extends Component {
     );
   }
   renderList() {
-    const { data,refreshing } = this.state;
-    const {searchValue} = this.state;
     return (
-      <View style={styles.list}>
-        <FlatList
-          data={data.filter(item=>{
-            console.log(item)
-            if(!searchValue){
-              return true
-            }
-            const {StoreName,StoreTel} = item;
-            return StoreName.includes(searchValue) || StoreTel.includes(searchValue);
-          }).sort((prev,next)=>{
-            return  next.StoreId -prev.StoreId 
-          })} 
-          onRefresh={this.onRefresh}
-          refreshing={refreshing}
-          ListEmptyComponent={<Text style={styles.noData}>暂时没有数据哦!</Text>}
-          renderItem={({ item }) => this.renderItem(item)}
-          keyExtractor={item => item.StoreId + item.StoreName}
-        />
-      </View>
+      <DataView
+        style={styles.list}
+        getData={this.getStoreList}
+        ListEmptyComponent={<Text>暂时没有数据哦</Text>}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        renderItem={({ item }) => this.renderItem(item)}
+        keyExtractor={item => item.StoreId + item.StoreName}
+        ref={e => this.list = e}
+      />
+
+
     );
   }
   render() {

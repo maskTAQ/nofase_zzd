@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import { View, Text, FlatList, StatusBar } from "react-native";
+import { View, Text, StatusBar, Linking } from "react-native";
 import action from "src/action";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import {  Button, Icon, Input, Alert } from "src/components";
+import { Button, Icon, Input, Alert, DataView } from "src/components";
+import api from 'src/api';
 import styles from "./style";
 
-const DeleteModal = ({isVisible}) => {
+const DeleteModal = ({ isVisible }) => {
     const s = {
         container: {
             width: '100%',
@@ -64,7 +66,7 @@ const DeleteModal = ({isVisible}) => {
         </Alert>
     )
 }
-const EditModal = ({isVisible,close}) => {
+const EditModal = ({ isVisible, close }) => {
     const styles = {
         container: {
             width: '100%',
@@ -142,15 +144,28 @@ const EditModal = ({isVisible,close}) => {
     )
 }
 //分站端页面
+
+@connect(state => {
+    const { auth } = state;
+    return { auth };
+})
 export default class SubAdmin extends Component {
     static defaultProps = {};
     static propTypes = {
         navigation: PropTypes.object
     };
     state = {
-        isDeleteModalVisible:false,
-        isEditModalVisible:false,
+        isDeleteModalVisible: false,
+        isEditModalVisible: false,
     };
+
+    getAdminList = () => {
+        return api.getAdminList(this.props.auth.AdminId)
+            .then(res => {
+                console.log(res);
+                return res;
+            })
+    }
     renderHeader() {
         return (
             <View style={styles.header}>
@@ -160,10 +175,10 @@ export default class SubAdmin extends Component {
                     barStyle="light-content"
                 />
                 <View style={styles.headerBox}>
-                    <Button onPress={()=>{
+                    <Button onPress={() => {
                         this.props.navigation.dispatch(
                             action.navigate.go({ routeName: "Home" })
-                          );
+                        );
                     }} style={styles.headerLeftButton}>管理端</Button>
                     <View style={styles.searchBarWrapper}>
                         <View style={styles.searchBarBox}>
@@ -173,7 +188,11 @@ export default class SubAdmin extends Component {
                                 <Icon size={20} source={require('./img/u15.png')} />
                             </Button>
                         </View></View>
-                    <Button style={styles.headerRightButton}>
+                    <Button onPress={() => {
+                        this.props.navigation.dispatch(
+                            action.navigate.go({ routeName: "AddAdmin" })
+                        );
+                    }} style={styles.headerRightButton}>
                         <Icon size={20} source={require('./img/u80.png')} />
                     </Button>
                 </View>
@@ -181,61 +200,63 @@ export default class SubAdmin extends Component {
         );
     }
     renderItem(row) {
-        const { name, addr, mobile } = row;
+        const { NickName, UserName, AdminId, AddressList } = row;
+        const { Province, City, Area, } = AddressList;
         return (
             <View style={styles.item}>
                 <View style={styles.itemLeft}>
                     <View style={styles.itemLeftTop}>
-                        <Text style={styles.itemName}>{name}</Text>
-                        <Text style={styles.itemAddr}>{addr}</Text>
+                        <Text style={styles.itemName}>{NickName+'   '}</Text>
+                        <Text style={styles.itemAddr}>{   AddressList.map(({Area})=>Area).join('/')}</Text>
                     </View>
                     <View style={styles.itemLeftBottom}>
-                        <Text style={styles.itemMobile}>{mobile}</Text>
+                        <Text style={styles.itemMobile}>{UserName}</Text>
                     </View>
                 </View>
                 <View style={styles.itemRight}>
-                    <Button>
+                    <Button onPress={() => {
+                        Linking.openURL(`tel:${UserName}`)
+                    }}>
                         <Icon size={20} source={require('./img/u88.png')} />
                     </Button>
-                    <Button onPress={()=>{
-                        this.setState({
-                            isEditModalVisible:true
-                        })
+                    <Button onPress={() => {
+                        // this.setState({
+                        //     isEditModalVisible: true
+                        // })
+                        api.getAdminInfo(AdminId)
+                            .then(res => {
+                                console.log(res)
+                            })
                     }} style={styles.itemEdit}>编辑</Button>
                 </View>
             </View>
         );
     }
     renderList() {
-        const data = [
-            {
-                name: '王晓东',
-                addr: '广州省-深圳市-南山区',
-                mobile: '15048921980'
-            }
-        ];
+
         return (
-            <View style={styles.list}>
-                <FlatList
-                    data={data}
-                    ListEmptyComponent={<Text>暂时没有数据哦</Text>}
-                    renderItem={({ item }) => this.renderItem(item)}
-                    keyExtractor={item => item.name}
-                />
-            </View>
+            <DataView
+                style={styles.list}
+                getData={this.getAdminList}
+                isPulldownLoadMore={false}
+                ListEmptyComponent={<Text>暂时没有数据哦</Text>}
+                renderItem={({ item }) => this.renderItem(item)}
+                ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+                keyExtractor={item => item.UserName + item.Address}
+            />
         );
     }
     render() {
-        const {isEditModalVisible} = this.state;
+        const { isEditModalVisible } = this.state;
         return (
             <View style={styles.container}>
                 {this.renderHeader()}
                 {this.renderList()}
-                <EditModal isVisible={isEditModalVisible} close={()=>{
+                <EditModal isVisible={isEditModalVisible} close={() => {
                     this.setState({
-                        isEditModalVisible:false
+                        isEditModalVisible: false
                     })
-                }}/>
+                }} />
             </View>
         );
     }
