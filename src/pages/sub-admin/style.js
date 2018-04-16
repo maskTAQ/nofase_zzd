@@ -59,6 +59,7 @@ export default {
         alignItems: 'center',
     },
     list: {
+        flex:1,
         padding: 6,
     },
     item: {

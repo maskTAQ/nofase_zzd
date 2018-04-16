@@ -5,10 +5,11 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 import { Button, Icon, Input, Alert, DataView } from "src/components";
+import { Tip } from 'src/common';
 import api from 'src/api';
 import styles from "./style";
 
-const DeleteModal = ({ isVisible }) => {
+const DeleteModal = ({ isVisible, onOk, onCancel }) => {
     const s = {
         container: {
             width: '100%',
@@ -17,6 +18,7 @@ const DeleteModal = ({ isVisible }) => {
             borderWidth: 1,
             borderColor: '#1a9cf5',
             borderRadius: 4,
+            backgroundColor: '#fff',
         },
         title: {
             height: 60,
@@ -59,17 +61,24 @@ const DeleteModal = ({ isVisible }) => {
                     </Text>
                 </View>
                 <View style={s.buttonGroup}>
-                    <Button style={[s.button, s.confirm]} textStyle={s.confirmText}>确定</Button>
-                    <Button style={[s.button, s.cancel]} textStyle={s.cancelText}>取消</Button>
+                    <Button onPress={onOk} style={[s.button, s.confirm]} textStyle={s.confirmText}>确定</Button>
+                    <Button onPress={onCancel} style={[s.button, s.cancel]} textStyle={s.cancelText}>取消</Button>
                 </View>
             </View>
         </Alert>
     )
 }
-const EditModal = ({ isVisible, close }) => {
+DeleteModal.propTypes = {
+    isVisible: PropTypes.bool,
+    onOk: PropTypes.func,
+    onCancel: PropTypes.func
+};
+const EditModal = ({ isVisible, close, onEdit, onDelete }) => {
     const styles = {
         container: {
             width: '100%',
+            padding: 15,
+            backgroundColor: '#fff',
         },
         content: {
             width: '100%',
@@ -123,14 +132,16 @@ const EditModal = ({ isVisible, close }) => {
                             [
                                 {
                                     icon: require('./img/u141.png'),
-                                    label: '编辑'
+                                    label: '编辑',
+                                    onPress: onEdit
                                 },
                                 {
                                     icon: require('./img/u284.png'),
                                     label: '删除',
+                                    onPress: onDelete
                                 }
-                            ].map(({ icon, label }) => (
-                                <Button style={styles.item} key={label}>
+                            ].map(({ icon, label, onPress }) => (
+                                <Button onPress={onPress} style={styles.item} key={label}>
                                     <Icon size={20} source={icon} />
                                     <Text style={styles.itemLabel}>{label}</Text>
                                 </Button>
@@ -143,6 +154,12 @@ const EditModal = ({ isVisible, close }) => {
         </Alert>
     )
 }
+EditModal.propTypes = {
+    isVisible: PropTypes.bool,
+    close: PropTypes.func,
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func
+};
 //分站端页面
 
 @connect(state => {
@@ -152,21 +169,36 @@ const EditModal = ({ isVisible, close }) => {
 export default class SubAdmin extends Component {
     static defaultProps = {};
     static propTypes = {
-        navigation: PropTypes.object
+        navigation: PropTypes.object,
+        auth: PropTypes.object
     };
     state = {
         isDeleteModalVisible: false,
         isEditModalVisible: false,
+        searchValue: ''
     };
 
     getAdminList = () => {
+        const { searchValue } = this.state;
         return api.getAdminList(this.props.auth.AdminId)
             .then(res => {
-                console.log(res);
-                return res;
+                return res.filter(({ UserName, NickName, AddressList }) => {
+                    if (!searchValue) { return true }
+
+                    let hasCity = false;
+                    for (let i = 0; i < AddressList.length; i++) {
+                        if (AddressList[i].Address.includes(searchValue)) {
+                            hasCity = true;
+                            break;
+                        }
+                    }
+                    console.log(hasCity || UserName.includes(searchValue) || NickName.includes(searchValue))
+                    return hasCity || UserName.includes(searchValue) || NickName.includes(searchValue)
+                })
             })
     }
     renderHeader() {
+        const { searchValue } = this.state;
         return (
             <View style={styles.header}>
                 <StatusBar
@@ -182,9 +214,9 @@ export default class SubAdmin extends Component {
                     }} style={styles.headerLeftButton}>管理端</Button>
                     <View style={styles.searchBarWrapper}>
                         <View style={styles.searchBarBox}>
-                            <Input style={styles.searchInput} placeholder="站长名称/手机号码搜索/区" />
+                            <Input value={searchValue} onChangeText={v => this.setState({ searchValue: v })} style={styles.searchInput} placeholder="站长名称/手机号码搜索/区" />
                             <View style={styles.searchBarBorder}></View>
-                            <Button style={styles.searchButton}>
+                            <Button onPress={()=>this.list.triggerRefresh()} style={styles.searchButton}>
                                 <Icon size={20} source={require('./img/u15.png')} />
                             </Button>
                         </View></View>
@@ -200,14 +232,13 @@ export default class SubAdmin extends Component {
         );
     }
     renderItem(row) {
-        const { NickName, UserName, AdminId, AddressList } = row;
-        const { Province, City, Area, } = AddressList;
+        const { NickName, UserName, AddressList } = row;
         return (
             <View style={styles.item}>
                 <View style={styles.itemLeft}>
                     <View style={styles.itemLeftTop}>
-                        <Text style={styles.itemName}>{NickName+'   '}</Text>
-                        <Text style={styles.itemAddr}>{   AddressList.map(({Area})=>Area).join('/')}</Text>
+                        <Text style={styles.itemName}>{NickName + '   '}</Text>
+                        <Text style={styles.itemAddr}>{AddressList.map(({ Area }) => Area).join('/')}</Text>
                     </View>
                     <View style={styles.itemLeftBottom}>
                         <Text style={styles.itemMobile}>{UserName}</Text>
@@ -220,13 +251,11 @@ export default class SubAdmin extends Component {
                         <Icon size={20} source={require('./img/u88.png')} />
                     </Button>
                     <Button onPress={() => {
-                        // this.setState({
-                        //     isEditModalVisible: true
-                        // })
-                        api.getAdminInfo(AdminId)
-                            .then(res => {
-                                console.log(res)
-                            })
+                        this.setState({
+                            isEditModalVisible: true,
+                            currentAdminInfo: row
+                        })
+
                     }} style={styles.itemEdit}>编辑</Button>
                 </View>
             </View>
@@ -236,6 +265,7 @@ export default class SubAdmin extends Component {
 
         return (
             <DataView
+                ref={e => this.list = e}
                 style={styles.list}
                 getData={this.getAdminList}
                 isPulldownLoadMore={false}
@@ -247,16 +277,62 @@ export default class SubAdmin extends Component {
         );
     }
     render() {
-        const { isEditModalVisible } = this.state;
+        const { isEditModalVisible, isDeleteModalVisible, currentAdminInfo } = this.state;
         return (
             <View style={styles.container}>
                 {this.renderHeader()}
                 {this.renderList()}
-                <EditModal isVisible={isEditModalVisible} close={() => {
-                    this.setState({
-                        isEditModalVisible: false
-                    })
-                }} />
+                <EditModal
+                    isVisible={isEditModalVisible}
+                    close={() => {
+                        this.setState({
+                            isEditModalVisible: false
+                        })
+                    }}
+                    onEdit={() => {
+                        this.setState({
+                            isEditModalVisible: false,
+                        }, () => {
+                            this.props.navigation.dispatch(
+                                action.navigate.go({ routeName: "AddAdmin", params: currentAdminInfo })
+                            );
+                        })
+
+                    }}
+                    onDelete={() => {
+                        this.setState({
+                            isEditModalVisible: false,
+                            isDeleteModalVisible: true
+                        })
+                    }}
+                />
+                <DeleteModal
+                    isVisible={isDeleteModalVisible}
+                    onOk={() => {
+                        api.deleteAdmin(currentAdminInfo.Id)
+                            .then(res => {
+                                this.setState({
+                                    isDeleteModalVisible: false
+                                }, () => {
+                                    this.list.triggerRefresh();
+                                    Tip.success('删除管理员成功');
+                                })
+                            })
+                            .catch((e) => {
+                                this.setState({
+                                    isDeleteModalVisible: false
+                                }, () => {
+                                    Tip.fail('删除管理员失败');
+                                })
+                            })
+
+                    }}
+                    onCancel={() => {
+                        this.setState({
+                            isDeleteModalVisible: false
+                        })
+                    }}
+                />
             </View>
         );
     }

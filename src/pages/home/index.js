@@ -107,6 +107,10 @@ export default class Home extends Component {
           </Button>
         )
       };
+    }else{
+      headerProps={
+        LeftComponent:<View></View>
+      }
     }
     return (
       <View style={styles.header}>
@@ -120,7 +124,7 @@ export default class Home extends Component {
           <Button onPress={() => {
             //
             this.props.navigation.dispatch(
-              action.navigate.go({ routeName: "HistoryConsume" })
+              action.navigate.go({ routeName: "HistoryConsume", params: { Address: citys[activeAddrIndex].label } })
             );
           }}>
             <Icon size={30} source={require("./img/u85.png")} />
@@ -196,14 +200,13 @@ export default class Home extends Component {
       <DataView
         style={styles.list}
         getData={this.getStoreList}
+        isPulldownLoadMore={false}
         ListEmptyComponent={<Text>暂时没有数据哦</Text>}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         renderItem={({ item }) => this.renderItem(item)}
         keyExtractor={item => item.StoreId + item.StoreName}
         ref={e => this.list = e}
       />
-
-
     );
   }
   render() {

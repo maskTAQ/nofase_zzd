@@ -1,24 +1,67 @@
 import React, { Component } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import moment from "moment";
-//import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 
-import { Page, Button, Icon } from "src/components";
+import { Page, Button, Icon, DataView } from "src/components";
+import api from 'src/api';
+import action from 'src/action';
 import styles from "./style";
 export default class HistoryConsume extends Component {
   static defaultProps = {};
-  static propTypes = {};
+  static propTypes = {
+    navigation: PropTypes.object
+  };
   state = {
     activeIndex: 0,
     isDateTimePickerVisible: false,
-    startTime: "请选择开始时间",
-    startTimeData: null,
-    endTime: "请选择结束时间",
-    endTimeData: null
+    startTime: "开始时间",
+    startTimeDate: null,
+    endTime: "结束时间",
+    endTimeDate: null,
+
+    Amont: '-',
+    InPeople: '-',
+    TimeLongs: '-',
+    AveAmont: '-'
   };
   store = {
-    currentSelectedTimtType: ""
+    currentSelectedTimeType: "",
+    dates: [
+      {
+        SDate: `${moment(new Date("1997")).format("YYYY-MM-DD")}`,
+        EDate: `${moment().format("YYYY-MM-DD")}`
+      },
+      {
+        SDate: `${moment().format("YYYY-MM-DD")}`,
+        EDate: `${moment().format("YYYY-MM-DD")}`
+      },
+      {
+        SDate: `${moment()
+          .subtract({ hours: 24 })
+          .format("YYYY-MM-DD")}`,
+        EDate: `${moment().format("YYYY-MM-DD")}`
+      },
+      {
+        SDate: `${moment()
+          .subtract({ hours: 24 * 3 })
+          .format("YYYY-MM-DD")}`,
+        EDate: `${moment().format("YYYY-MM-DD")}`
+      },
+      {
+        SDate: `${moment()
+          .subtract({ hours: 24 * 10 })
+          .format("YYYY-MM-DD")}`,
+        EDate: `${moment().format("YYYY-MM-DD")}`
+      },
+      {
+        SDate: `${moment()
+          .startOf("month")
+          .format("YYYY-MM-DD")}`,
+        EDate: `${moment().format("YYYY-MM-DD")}`
+      }
+    ]
   };
   _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
 
@@ -26,23 +69,70 @@ export default class HistoryConsume extends Component {
 
   _handleDatePicked = date => {
     const time = moment(date).format("YYYY-MM-DD");
-    const { currentSelectedTimtType } = this.store;
-    if (currentSelectedTimtType === "start") {
+    const { currentSelectedTimeType } = this.store;
+    const { startTimeDate, endTimeDate } = this.state;
+    if (currentSelectedTimeType === "start") {
       this.setState({
         startTime: time,
-        startTimeData: date
+        startTimeDate: date
       });
+      if (endTimeDate) {
+        this.setState({ activeIndex: NaN }, () => {
+          this.list.triggerRefresh()
+        });
+
+      }
     } else {
       this.setState({
         endTime: time,
-        endTimeData: date
+        endTimeDate: date
       });
+      if (startTimeDate) {
+        this.setState({ activeIndex: NaN }, () => {
+          this.list.triggerRefresh()
+        });
+      }
     }
+
     this._hideDateTimePicker();
   };
   selectTime(type) {
-    this.store.currentSelectedTimtType = type;
+    this.store.currentSelectedTimeType = type;
     this.setState({ isDateTimePickerVisible: true });
+  }
+  getData = (PageIndex) => {
+    const { activeIndex, startTime, endTime } = this.state;
+    const { dates } = this.store;
+    const { Address } = this.props.navigation.state.params;
+    const date = isNaN(activeIndex) ? { SDate: startTime, EDate: endTime } : dates[activeIndex];
+    api.getStoreBusInfoByDate({
+      Address, ...date
+    })
+      .then(res => {
+        this.setState({ ...res })
+      })
+      .catch(e => {
+        console.log(e)
+      })
+
+    return api.getStoreUserListByDate({
+      PageIndex, PageNum: 20, Address, ...date
+    })
+      .then(res => {
+        console.log(res);
+        return res;
+      })
+      .catch(e => {
+        console.log(e)
+      })
+  }
+  selectDateType(i) {
+    this.setState(
+      { activeIndex: i, startTimeDate: null, endTimeDate: null },
+      () => {
+        this.list.triggerRefresh();
+      }
+    );
   }
   renderChooseDay() {
     const { activeIndex } = this.state;
@@ -53,6 +143,7 @@ export default class HistoryConsume extends Component {
           const isActive = activeIndex === i;
           return (
             <Button
+              onPress={() => this.selectDateType(i)}
               style={[styles.dayItem, isActive ? styles.dayActiveItem : null]}
               textStyle={[
                 styles.dayItemText,
@@ -104,27 +195,30 @@ export default class HistoryConsume extends Component {
     );
   }
   renderDetail() {
+    const { activeIndex, startTime, endTime, Amont, InPeople, TimeLongs, AveAmont } = this.state;
+    const { dates } = this.store;
+    const date = isNaN(activeIndex) ? { SDate: startTime, EDate: endTime } : dates[activeIndex];
     return (
       <View style={styles.detail}>
-        <Text style={styles.detailTitle}>2017-12-21至2017-12-20 </Text>
+        <Text style={styles.detailTitle}>{date.SDate}至{date.EDate} </Text>
         <View style={styles.detailItemRow}>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>营业额:</Text>
-            <Text style={styles.detailItemValue}>313元</Text>
+            <Text style={styles.detailItemValue}>{Amont}元</Text>
           </View>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>消费人次:</Text>
-            <Text style={styles.detailItemValue}>215人次</Text>
+            <Text style={styles.detailItemValue}>{InPeople}人次</Text>
           </View>
         </View>
         <View style={styles.detailItemRow}>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>在线时长:</Text>
-            <Text style={styles.detailItemValue}>313。3</Text>
+            <Text style={styles.detailItemValue}>{TimeLongs}m</Text>
           </View>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>平均消费:</Text>
-            <Text style={styles.detailItemValue}>32.4元/人</Text>
+            <Text style={styles.detailItemValue}>{AveAmont}元/人</Text>
           </View>
         </View>
       </View>
@@ -158,19 +252,25 @@ export default class HistoryConsume extends Component {
   }
 
   renderItem(row) {
-    const { icon, name, addr } = row;
+    const icon = require("./img/u45.png");
+    const { StoreName, Address, StoreId } = row;
     return (
       <View style={styles.item}>
         <View style={styles.itemTop}>
           <Icon size={82} source={icon} />
           <View style={styles.itemDetail}>
             <View style={styles.itemDetaiTop}>
-              <Text style={styles.itemName}>{name}</Text>
+              <Text style={styles.itemName}>{StoreName}</Text>
               <View style={{ flexDirection: "row" }}>
                 <Button>
                   <Icon size={26} source={require("./img/u204.png")} />
                 </Button>
                 <Button
+                  onPress={() => {
+                    this.props.navigation.dispatch(
+                      action.navigate.go({ routeName: "StoreAdd", params: { StoreId } })
+                    );
+                  }}
                   style={styles.editButton}
                   textStyle={styles.editButtonText}
                 >
@@ -179,11 +279,11 @@ export default class HistoryConsume extends Component {
               </View>
             </View>
             <Text style={styles.itemAddr} numberOfLines={2}>
-              {addr}
+              {Address}
             </Text>
           </View>
         </View>
-        {this.renderItemDetail()}
+        {this.renderItemDetail(row)}
         <View style={styles.tagWrapper}>
           <Text style={styles.tagText}>20人</Text>
         </View>
@@ -239,14 +339,15 @@ export default class HistoryConsume extends Component {
       }
     ];
     return (
-      <View style={styles.list}>
-        <FlatList
-          data={data}
-          ListEmptyComponent={<Text>暂时没有数据哦</Text>}
-          renderItem={({ item }) => this.renderItem(item)}
-          keyExtractor={item => item.name}
-        />
-      </View>
+      <DataView
+        ref={e => this.list = e}
+        style={styles.list}
+        getData={this.getData}
+        isPulldownLoadMore={false}
+        ListEmptyComponent={<Text>暂时没有数据哦</Text>}
+        renderItem={({ item }) => this.renderItem(item)}
+        keyExtractor={item => item.UserName + item.Address}
+      />
     );
   }
   render() {

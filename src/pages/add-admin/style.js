@@ -10,8 +10,8 @@ export default {
     },
     item: {
         paddingTop: 20,
-        paddingLeft: 15,
-        paddingRight: 15,
+        paddingLeft: 5,
+        paddingRight: 5,
 
     },
     itemContent: {

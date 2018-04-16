@@ -2,7 +2,7 @@ import { post } from "./base";
 
 export default {
   login({ Tel, ExCode }) {//http://101.200.196.202:8888/Admin/
-    return post("/Admin/AdminLoginTest", { Tel, ExCode });
+    return post("/Admin/AdminLogin", { Tel, ExCode });
   },
   rememberLogin({ Tel }) {
     return post("/Admin/AdminLoginTest", { Tel });
@@ -19,10 +19,6 @@ export default {
   getAdminAddressInfo() {
     return post("/Admin/GetAdminAddressInfo");
   },
-  //获取地区营业信息
-  getStoreBusInfoByDate(params) {
-    return post("/Admin/GetStoreBusInfoByDate", params);
-  },
   //新建店铺
   addStore(params) {
     return post("/Store/SaveStore", params);
@@ -37,9 +33,18 @@ export default {
     const url = StoreId ? '/Store/EditStore' : 'Store/SaveStore';
     return post(url, params);
   },
+  //获取地区营业信息 http://101.200.196.202:8888/Admin/GetStoreBusInfoByDate
+  getStoreBusInfoByDate(params) {
+    return post("/Admin/GetStoreBusInfoByDate", params, { loading: false });
+  },
+  //获取商铺营业统计列表http://101.200.196.202:8888/Admin/GetStoreUserListByDate
+  getStoreUserListByDate(params) {
+    console.log(params)
+    return post("/Admin/GetStoreUserListByDate", params, { loading: false });
+  },
   //获取管理员列表
   getAdminList(AdminId) {
-    return post("/Admin/GetAdminInfoList", { AdminId },{loading:false});
+    return post("/Admin/GetAdminInfoList", { AdminId }, { loading: false });
   },
   //获取管理员详情 
   getAdminInfo(AdminId) {
@@ -48,6 +53,14 @@ export default {
   //新建管理员
   addAdmin(params) {
     return post("/Admin/SaveAdmin", params, { handleCatch: false });
+  },
+  //编辑管理员
+  editAdmin(params) {
+    return post("/Admin/EditAdmin", params, { handleCatch: false });
+  },
+  //删除管理员 DeleteAdmin
+  deleteAdmin(theAdminId) {
+    return post("/Admin/DeleteAdmin", { theAdminId }, { handleCatch: false });
   },
   //获取店铺信息
   getStoreInfo({ Need, StoreId, AdminId }) {
@@ -63,7 +76,6 @@ export default {
   },
   //获取店铺列表 GetStoreUserListByDateTest
   getStoreList(params) {
-    console.log(params)
     return post("/Admin/GetStoreListBySeach", { params }, { loading: false });
   },
   //保存课程表
