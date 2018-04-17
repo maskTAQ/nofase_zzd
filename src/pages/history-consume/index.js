@@ -224,27 +224,28 @@ export default class HistoryConsume extends Component {
       </View>
     );
   }
-  renderItemDetail() {
+  renderItemDetail(item) {
+    const { Amont, TimeLong, AvgAmont, OrderCount } = item;
     return (
       <View style={styles.itemBottom}>
         <View style={styles.detailItemRow}>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>营业额:</Text>
-            <Text style={styles.detailItemValue}>313元</Text>
+            <Text style={styles.detailItemValue}>{Amont}元</Text>
           </View>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>消费人次:</Text>
-            <Text style={styles.detailItemValue}>215人次</Text>
+            <Text style={styles.detailItemValue}>{OrderCount}人次</Text>
           </View>
         </View>
         <View style={styles.detailItemRow}>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>在线时长:</Text>
-            <Text style={styles.detailItemValue}>313。3</Text>
+            <Text style={styles.detailItemValue}>{TimeLong}分钟</Text>
           </View>
           <View style={styles.detailItem}>
             <Text style={styles.detailItemLabel}>平均消费:</Text>
-            <Text style={styles.detailItemValue}>32.4元/人</Text>
+            <Text style={styles.detailItemValue}>{AvgAmont.toFixed(2)}元/人</Text>
           </View>
         </View>
       </View>
@@ -253,7 +254,7 @@ export default class HistoryConsume extends Component {
 
   renderItem(row) {
     const icon = require("./img/u45.png");
-    const { StoreName, Address, StoreId } = row;
+    const { StoreName, Address, StoreId, NowInPeople, PeopleNum = 0 } = row;
     return (
       <View style={styles.item}>
         <View style={styles.itemTop}>
@@ -285,7 +286,7 @@ export default class HistoryConsume extends Component {
         </View>
         {this.renderItemDetail(row)}
         <View style={styles.tagWrapper}>
-          <Text style={styles.tagText}>20人</Text>
+          <Text style={styles.tagText}>{PeopleNum - NowInPeople}人</Text>
         </View>
       </View>
     );

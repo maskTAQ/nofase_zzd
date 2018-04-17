@@ -2,7 +2,7 @@ import { post } from "./base";
 
 export default {
   login({ Tel, ExCode }) {//http://101.200.196.202:8888/Admin/
-    return post("/Admin/AdminLogin", { Tel, ExCode });
+    return post("/Admin/AdminLoginTest", { Tel, ExCode });
   },
   rememberLogin({ Tel }) {
     return post("/Admin/AdminLoginTest", { Tel });
@@ -39,7 +39,7 @@ export default {
   },
   //获取商铺营业统计列表http://101.200.196.202:8888/Admin/GetStoreUserListByDate
   getStoreUserListByDate(params) {
-    console.log(params)
+    
     return post("/Admin/GetStoreUserListByDate", params, { loading: false });
   },
   //获取管理员列表

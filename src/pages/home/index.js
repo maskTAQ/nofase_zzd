@@ -66,7 +66,6 @@ export default class Home extends Component {
       activeAddrIndex: value,
       isPickerVisible: false
     }, () => {
-      console.log(this.list)
       this.list.triggerRefresh()
     })
   }
@@ -78,7 +77,7 @@ export default class Home extends Component {
   renderHeader() {
     const { activeAddrIndex, Amont, InPeople } = this.state;
     const { AdminLevel } = this.props.auth;
-
+    console.log(this.props.auth)
     let headerProps = {};
     if (AdminLevel === 1) {
       headerProps = {
@@ -107,9 +106,19 @@ export default class Home extends Component {
           </Button>
         )
       };
-    }else{
-      headerProps={
-        LeftComponent:<View></View>
+    } else {
+      headerProps = {
+        LeftComponent: <View></View>,
+        titleComponent: (
+          <Button onPress={() => {
+            this.setState({
+              isPickerVisible: true
+            })
+          }} style={styles.titleBox}>
+            <Text style={styles.titleText}>{this.storeAddrList[activeAddrIndex].label}</Text>
+            <Icon style={styles.titleIcon} size={20} source={require('./img/u305.png')} />
+          </Button>
+        )
       }
     }
     return (
@@ -153,8 +162,8 @@ export default class Home extends Component {
     );
   }
   renderItem(row) {
-    const { canPeople, StoreName, Location, StoreTel, StoreId } = row;
-    const icon = require("./img/u42.png");
+    const { StoreName, Address, StoreTel, Id, PeopleNum = 0, NowPeopleNum, StoreImg } = row;
+    const icon = StoreImg.includes('https') ? { uri: StoreImg } : require("./img/logo.png");
     return (
       <View style={styles.item}>
         <View style={styles.itemBox}>
@@ -174,7 +183,7 @@ export default class Home extends Component {
                 <Button
                   onPress={() => {
                     this.props.navigation.dispatch(
-                      action.navigate.go({ routeName: "StoreAdd", params: { StoreId } })
+                      action.navigate.go({ routeName: "StoreAdd", params: { StoreId: Id } })
                     );
                   }}
                   style={styles.editButton}
@@ -185,12 +194,12 @@ export default class Home extends Component {
               </View>
             </View>
             <Text style={styles.itemAddr} numberOfLines={2}>
-              {Location}
+              {Address}
             </Text>
           </View>
         </View>
         <View style={styles.tagWrapper}>
-          <Text style={styles.tagText}>{canPeople}人</Text>
+          <Text style={styles.tagText}>{PeopleNum - NowPeopleNum}人</Text>
         </View>
       </View>
     );
@@ -211,7 +220,7 @@ export default class Home extends Component {
   }
   render() {
     const { isPickerVisible } = this.state;
-
+    const { auth } = this.props;
     return (
       <View style={styles.container}>
         {this.renderHeader()}
@@ -220,7 +229,7 @@ export default class Home extends Component {
         <Picker
           visible={isPickerVisible}
           onValueSelect={this.onAddrChange}
-          data={this.storeAddrList}
+          data={auth.AddressList ? auth.AddressList.map(({ Area }) => ({ value: Area, label: Area })) : this.storeAddrList}
           onRequestClose={() => {
             this.setState({
               isPickerVisible: false
