@@ -1,8 +1,16 @@
 import { post } from "./base";
+import Axios from "axios";
 
 export default {
+  token() {
+    return Axios.request({
+      url: "http://47.104.131.96:8000/",
+      method: "get",
+      timeout: 6000
+    });
+  },
   login({ Tel, ExCode }) {//http://101.200.196.202:8888/Admin/
-    return post("/Admin/AdminLoginTest", { Tel, ExCode });
+    return post("/Admin/AdminLogin", { Tel, ExCode });
   },
   rememberLogin({ Tel }) {
     return post("/Admin/AdminLoginTest", { Tel });
