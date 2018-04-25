@@ -162,6 +162,7 @@ export default class Home extends Component {
     );
   }
   renderItem(row) {
+    console.log(row);
     const { StoreName, Address, StoreTel, Id, PeopleNum = 0, NowPeopleNum, StoreImg } = row;
     const icon = StoreImg.includes('https') ? { uri: StoreImg } : require("./img/logo.png");
     return (

@@ -26,7 +26,21 @@ class App extends Component {
     nav: PropTypes.object.isRequired,
   };
   componentWillMount() {
-    //监听dispatch事件 由onDispatch统一发送action
+    this.autoLogin();
+    this.verifyToken();
+  }
+  componentDidMount() {
+    if (Platform.OS === "android") {
+      BackHandler.addEventListener("hardwareBackPress", this.handleBack);
+    }
+
+  }
+  componentWillUnmount() {
+    if (Platform.OS === "android") {
+      BackHandler.removeEventListener("hardwareBackPress", this.handleBack);
+    }
+  }
+  autoLogin(){
     AsyncStorage.getItem('mobile', (e, m) => {
       if (!e && m) {
         api.rememberLogin({ Tel: m })
@@ -42,33 +56,19 @@ class App extends Component {
 
           })
       }
-    })
+    });
   }
-  componentDidMount() {
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener("hardwareBackPress", this.handleBack);
-    }
-
+  verifyToken() {
+    api.token()
+      .then(res => {
+        if (res.data !== 'token') {
+          Platform.OS === "android" && BackHandler.exitApp();
+        }
+      })
+      .catch(e => {
+        //console.log(e)
+      })
   }
-  componentWillUnmount() {
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener("hardwareBackPress", this.handleBack);
-    }
-  }
-  // onDispatch = (apiUrl, reduxStoreKey, params) => {
-  //   const { dispatch } = this.props;
-  //   dispatch(CreateReduxField.action(reduxStoreKey, "loading"));
-  //   api[apiUrl](params)
-  //     .then(res => {
-  //       dispatch(
-  //         CreateReduxField.action(reduxStoreKey, "success", res)
-  //       );
-  //     })
-  //     .catch(e => {
-  //       dispatch(CreateReduxField.action(reduxStoreKey, "error"));
-  //     });
-  //   return 1;
-  // }
   handleBack = () => {
     const { nav } = this.props;
     const routeName = nav.routes[nav.index].routeName;
