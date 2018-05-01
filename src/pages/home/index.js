@@ -40,14 +40,21 @@ export default class Home extends Component {
   storeAddrList = citys;
   getStoreList = (PageIndex) => {
     const { activeAddrIndex, searchValue } = this.state;
+    console.log(
+      {
+        UserArea: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
+        PageIndex,
+        PageNum: 20,
+        SeachValue: searchValue
+      }
+    )
     return api.getStoreList({
       UserArea: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
       PageIndex,
       PageNum: 20,
-      SeachValue: searchValue
+      StoreValue: searchValue
     })
       .then(res => {
-        console.log(res);
         return res;
       })
   }
@@ -77,7 +84,6 @@ export default class Home extends Component {
   renderHeader() {
     const { activeAddrIndex, Amont, InPeople } = this.state;
     const { AdminLevel } = this.props.auth;
-    console.log(this.props.auth)
     let headerProps = {};
     if (AdminLevel === 1) {
       headerProps = {
@@ -162,9 +168,9 @@ export default class Home extends Component {
     );
   }
   renderItem(row) {
-    console.log(row);
     const { StoreName, Address, StoreTel, Id, PeopleNum = 0, NowPeopleNum, StoreImg } = row;
-    const icon = StoreImg.includes('https') ? { uri: StoreImg } : require("./img/logo.png");
+    const icon = StoreImg ? { uri: StoreImg } : require("./img/logo.png");
+    console.log(row)
     return (
       <View style={styles.item}>
         <View style={styles.itemBox}>
@@ -214,7 +220,7 @@ export default class Home extends Component {
         ListEmptyComponent={<Text>暂时没有数据哦</Text>}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         renderItem={({ item }) => this.renderItem(item)}
-        keyExtractor={item => item.StoreId + item.StoreName}
+        keyExtractor={item => String(item.Id)}
         ref={e => this.list = e}
       />
     );

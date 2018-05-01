@@ -139,6 +139,7 @@ export default {
     justifyContent: "space-between"
   },
   itemName: {
+    flex:1,
     fontSize: 15,
     fontWeight: "bold",
     color: "#666"
