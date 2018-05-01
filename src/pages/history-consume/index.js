@@ -8,6 +8,8 @@ import { Page, Button, Icon, DataView } from "src/components";
 import api from 'src/api';
 import action from 'src/action';
 import styles from "./style";
+
+const icon = require("./img/logo.png");
 export default class HistoryConsume extends Component {
   static defaultProps = {};
   static propTypes = {
@@ -253,12 +255,11 @@ export default class HistoryConsume extends Component {
   }
 
   renderItem(row) {
-    const icon = require("./img/u45.png");
-    const { StoreName, Address, StoreId, NowInPeople, PeopleNum = 0 } = row;
+    const { StoreName, Address, StoreId, NowInPeople, StoreImg, PeopleNum = 0 } = row;
     return (
       <View style={styles.item}>
         <View style={styles.itemTop}>
-          <Icon size={82} source={icon} />
+          <Icon size={82} source={StoreImg ? { uri: StoreImg } : icon} />
           <View style={styles.itemDetail}>
             <View style={styles.itemDetaiTop}>
               <Text style={styles.itemName}>{StoreName}</Text>
@@ -292,53 +293,6 @@ export default class HistoryConsume extends Component {
     );
   }
   renderList() {
-    const data = [
-      {
-        icon: require("./img/u45.png"),
-        name: "优思健身工作室(前海店)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u45.png"),
-        name: "优思健身工作室(前海店1)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u45.png"),
-        name: "优思健身工作室(前海店2)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u45.png"),
-        name: "优思健身工作室(前海店3)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      },
-      {
-        icon: require("./img/u45.png"),
-        name: "优思健身工作室(前海店4)",
-        distance: "234m",
-        lession: "瑜伽健身",
-        addr: "深南大道与前海教会处振业星海商业广场3101A",
-        evaluate: 4.3,
-        price: 15
-      }
-    ];
     return (
       <DataView
         ref={e => this.list = e}

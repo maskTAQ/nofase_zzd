@@ -40,14 +40,6 @@ export default class Home extends Component {
   storeAddrList = citys;
   getStoreList = (PageIndex) => {
     const { activeAddrIndex, searchValue } = this.state;
-    console.log(
-      {
-        UserArea: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
-        PageIndex,
-        PageNum: 20,
-        SeachValue: searchValue
-      }
-    )
     return api.getStoreList({
       UserArea: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
       PageIndex,
@@ -170,7 +162,6 @@ export default class Home extends Component {
   renderItem(row) {
     const { StoreName, Address, StoreTel, Id, PeopleNum = 0, NowPeopleNum, StoreImg } = row;
     const icon = StoreImg ? { uri: StoreImg } : require("./img/logo.png");
-    console.log(row)
     return (
       <View style={styles.item}>
         <View style={styles.itemBox}>
