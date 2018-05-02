@@ -22,7 +22,7 @@ export default class BindBank extends Component {
       { label: "中国工商银行", value: "中国工商银行" },
       { label: "中国建设银行", value: "中国建设银行" },
       { label: "中国银行", value: "中国银行" },
-      { label: "交通银行", value: "交哦银行" },
+      { label: "交通银行", value: "交通银行" },
       { label: "中国农业银行", value: "中国农业银行" },
       { label: "招商银行", value: "招商银行" }
     ],
@@ -107,22 +107,22 @@ export default class BindBank extends Component {
         {
           data.map(item => {
             const { key, label, value, disabled, placeholder } = item;
-            if (key === 'BankName') {
-              return (
-                <View style={styles.item} key={key}>
-                  <View style={styles.itemLabel}>
-                    <Text style={styles.itemLabelText}>
-                      {label}
-                    </Text>
-                  </View>
-                  <Button textStyle={styles.bankname} onPress={() => {
-                    this.setState({
-                      isPickerVisible: true
-                    })
-                  }}>{value || placeholder}</Button>
-                </View>
-              )
-            }
+            // if (key === 'BankName') {
+            //   return (
+            //     <View style={styles.item} key={key}>
+            //       <View style={styles.itemLabel}>
+            //         <Text style={styles.itemLabelText}>
+            //           {label}
+            //         </Text>
+            //       </View>
+            //       <Button textStyle={styles.bankname} onPress={() => {
+            //         this.setState({
+            //           isPickerVisible: true
+            //         })
+            //       }}>{value || placeholder}</Button>
+            //     </View>
+            //   )
+            // }
             return (
               <View style={styles.item} key={key}>
                 <View style={styles.itemLabel}>

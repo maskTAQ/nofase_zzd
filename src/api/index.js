@@ -47,7 +47,6 @@ export default {
   },
   //获取商铺营业统计列表http://101.200.196.202:8888/Admin/GetStoreUserListByDate
   getStoreUserListByDate(params) {
-    
     return post("/Admin/GetStoreUserListByDate", params, { loading: false });
   },
   //获取管理员列表
