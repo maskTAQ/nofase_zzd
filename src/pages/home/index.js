@@ -227,7 +227,7 @@ export default class Home extends Component {
         <Picker
           visible={isPickerVisible}
           onValueSelect={this.onAddrChange}
-          data={auth.AddressList ? auth.AddressList.map(({ Area }) => ({ value: Area, label: Area })) : this.storeAddrList}
+          data={auth.AddressList !== 1 ? auth.AddressList.map(({ Area }) => ({ value: Area, label: Area })) : this.storeAddrList}
           onRequestClose={() => {
             this.setState({
               isPickerVisible: false
