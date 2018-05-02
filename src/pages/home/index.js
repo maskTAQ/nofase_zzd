@@ -219,6 +219,7 @@ export default class Home extends Component {
   render() {
     const { isPickerVisible } = this.state;
     const { auth } = this.props;
+    console.log(auth)
     return (
       <View style={styles.container}>
         {this.renderHeader()}
@@ -227,7 +228,7 @@ export default class Home extends Component {
         <Picker
           visible={isPickerVisible}
           onValueSelect={this.onAddrChange}
-          data={auth.AddressList !== 1 ? auth.AddressList.map(({ Area }) => ({ value: Area, label: Area })) : this.storeAddrList}
+          data={auth.AdminLevel === 1 ? this.storeAddrList: auth.AddressList.map(({ Area }) => ({ value: Area, label: Area })) }
           onRequestClose={() => {
             this.setState({
               isPickerVisible: false
