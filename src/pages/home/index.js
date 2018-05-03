@@ -37,7 +37,7 @@ export default class Home extends Component {
     SDate: moment().format("YYYY/MM/DD"),
     EDate: moment().format("YYYY/MM/DD")
   };
-  storeAddrList = citys;
+  storeAddrList =[{label:'全部',value:0}].concat(citys);
   getStoreList = (PageIndex) => {
     const { activeAddrIndex, searchValue } = this.state;
     return api.getStoreList({
@@ -207,7 +207,6 @@ export default class Home extends Component {
       <DataView
         style={styles.list}
         getData={this.getStoreList}
-        isPulldownLoadMore={false}
         ListEmptyComponent={<Text>暂时没有数据哦</Text>}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         renderItem={({ item }) => this.renderItem(item)}
@@ -228,7 +227,7 @@ export default class Home extends Component {
         <Picker
           visible={isPickerVisible}
           onValueSelect={this.onAddrChange}
-          data={auth.AdminLevel === 1 ? this.storeAddrList: auth.AddressList.map(({ Area }) => ({ value: Area, label: Area })) }
+          data={auth.AdminLevel === 1 ?this.storeAddrList: auth.AddressList.map(({ Area }) => ({ value: Area, label: Area })) }
           onRequestClose={() => {
             this.setState({
               isPickerVisible: false

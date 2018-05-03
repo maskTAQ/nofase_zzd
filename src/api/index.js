@@ -83,7 +83,23 @@ export default {
   },
   //获取店铺列表 GetStoreUserListByDateTest
   getStoreList(params) {
-    return post("/Admin/GetStoreListBySeach", { params }, { loading: false });
+     return Axios.request({
+      url: "https://vmslq.cn/Admin/GetStoreListBySeach",
+      method: "get",
+      timeout: 6000,
+      params
+    })
+    .then(res => {
+      const { data: Data } = res;
+      const { code, message, data } = Data;
+      if (code > 0) {
+        const d = data || message;
+        return Promise.resolve(d);
+      } else {
+        return Promise.reject(message);
+      }
+    })
+    //return post("/Admin/GetStoreListBySeach", { params }, { loading: false });
   },
   //保存课程表
   saveCurriculum({ CurrJson, StoreId }) {
