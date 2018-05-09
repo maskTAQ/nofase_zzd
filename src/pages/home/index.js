@@ -52,6 +52,7 @@ export default class Home extends Component {
   }
   getStoreBusInfoByDate() {
     const { activeAddrIndex } = this.state;
+    console.log(this.storeAddrList,activeAddrIndex,this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''))
     api.getStoreBusInfoByDate({
       Address: this.storeAddrList[activeAddrIndex].label.replace(/-/g, ''),
       ...this.dateParams
@@ -131,7 +132,7 @@ export default class Home extends Component {
           <Button onPress={() => {
             //
             this.props.navigation.dispatch(
-              action.navigate.go({ routeName: "HistoryConsume", params: { Address: citys[activeAddrIndex].label } })
+              action.navigate.go({ routeName: "HistoryConsume", params: { Address: this.storeAddrList[activeAddrIndex].label } })
             );
           }}>
             <Icon size={30} source={require("./img/u85.png")} />

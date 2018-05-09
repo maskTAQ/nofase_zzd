@@ -106,6 +106,7 @@ export default class HistoryConsume extends Component {
     const { activeIndex, startTime, endTime } = this.state;
     const { dates } = this.store;
     const { Address } = this.props.navigation.state.params;
+    console.log(this.props.navigation.state.params)
     const date = isNaN(activeIndex) ? { SDate: startTime, EDate: endTime } : dates[activeIndex];
     api.getStoreBusInfoByDate({
       Address, ...date
