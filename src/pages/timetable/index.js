@@ -158,31 +158,31 @@ export default class Timetable extends Component {
       },
       {
         title: "周一",
-        ...this.createCommonValueByDataIndex("Week0")
-      },
-      {
-        title: "周二",
         ...this.createCommonValueByDataIndex("Week1")
       },
       {
-        title: "周三",
+        title: "周二",
         ...this.createCommonValueByDataIndex("Week2")
       },
       {
-        title: "周四",
+        title: "周三",
         ...this.createCommonValueByDataIndex("Week3")
       },
       {
-        title: "周五",
+        title: "周四",
         ...this.createCommonValueByDataIndex("Week4")
       },
       {
-        title: "周六",
+        title: "周五",
         ...this.createCommonValueByDataIndex("Week5")
       },
       {
-        title: "周日",
+        title: "周六",
         ...this.createCommonValueByDataIndex("Week6")
+      },
+      {
+        title: "周日",
+        ...this.createCommonValueByDataIndex("Week0")
       },
       {
         title: "删除",
