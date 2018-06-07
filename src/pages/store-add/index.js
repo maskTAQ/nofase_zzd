@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, FlatList, Text, ScrollView, TouchableOpacity, Alert as AlertModal } from "react-native";
+import { View, FlatList, Text, ScrollView, TouchableOpacity, Alert as AlertModal,Switch } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -65,6 +65,7 @@ export default class StoreAdd extends Component {
   constructor() {
     super()
     this.state = {
+      IsFristFree:false,
       activeLayerIndex: NaN,
       topListData: [
         {
@@ -191,6 +192,7 @@ export default class StoreAdd extends Component {
     const { AdminId } = this.props;
     api.getStoreInfo({ StoreId, AdminId })
       .then(res => {
+        console.log(res);
         const {
           StoreRemarks, Id, StoreName, StoreTel, StoreType,
           LegalName,
@@ -199,7 +201,7 @@ export default class StoreAdd extends Component {
           SalesmanName,
           ContractCode, BusinessWeeks,
           BusinessTimes,
-          Flag, PeopleNum, Charge, CsTel } = res;
+          Flag, PeopleNum, Charge, CsTel ,IsFristFree} = res;
 
         const result = {
           base: {
@@ -218,7 +220,8 @@ export default class StoreAdd extends Component {
             BusinessTimes,
             Flag
           },
-          StoreRemarks
+          StoreRemarks,
+          IsFristFree
         };
 
         const nextTopListData = Object.assign([], this.state.topListData),
@@ -415,6 +418,7 @@ export default class StoreAdd extends Component {
   }
   render() {
     const { StoreId } = this.props.navigation.state.params;
+    const {IsFristFree} = this.state;
     const title = StoreId ? '编辑店铺' : '添加店铺';
     return (
       <Page title={title} LeftComponent={(
@@ -451,6 +455,29 @@ export default class StoreAdd extends Component {
             <View style={styles.content}>
               {this.renderTop()}
               {this.renderBottom()}
+              <View style={styles.freeItem}>
+              <View style={styles.freeItemLabel}>
+                <Text style={styles.freeItemLabelText}>
+                  新用户首次免费:{IsFristFree ? "开启" : "关闭"}
+                </Text>
+              </View>
+              <Switch
+                value={IsFristFree}
+                onValueChange={v => {
+                  api
+                    .updateStore({ IsFristFree: v,StoreId })
+                    .then(res => {
+                      console.log(res);
+                      this.setState({
+                        IsFristFree: v
+                      });
+                    })
+                    .catch(e => {
+                      Tip.fail("设置失败");
+                    });
+                }}
+              />
+            </View>
             </View>
             <View style={styles.buttonBox} >
               <Button onPress={this.editStore} style={styles.submit} textStyle={styles.submitText}>完善店铺信息</Button></View>

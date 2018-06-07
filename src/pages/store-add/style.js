@@ -150,5 +150,35 @@ export default {
     borderWidth: 1,
     borderColor: "#999",
     borderRadius: 6
-  }
+  },
+
+  freeItem: {
+    height: 50,
+    paddingLeft: 15,
+    paddingRight: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fff"
+  },
+  freeItemBorder: {
+    height: 5,
+    backgroundColor: "#efefef"
+  },
+  freeItemLabel: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  freeItemLabelText: {
+    fontSize: 14,
+    color: "#666666"
+  },
+  freeItemIcon: {
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  freeItemValue: {
+    fontSize: 14,
+    color: "#666"
+  },
 };

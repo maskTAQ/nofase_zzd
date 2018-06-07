@@ -10,7 +10,7 @@ export default {
     });
   },
   login({ Tel, ExCode }) {//http://101.200.196.202:8888/Admin/
-    return post("/Admin/AdminLoginTest", { Tel, ExCode });
+    return post("/Admin/AdminLogin", { Tel, ExCode });
   },
   rememberLogin({ Tel }) {
     return post("/Admin/AdminLoginTest", { Tel });
@@ -78,6 +78,7 @@ export default {
   bindBank(params) {
     return post("/Store/BindBank", params);
   },
+  
   //获取银行卡信息
   getBankCardInfo({ StoreId }) {
     return post("/Store/GetBankInfo", { StoreId });
