@@ -192,7 +192,7 @@ export default class StoreAdd extends Component {
     const { AdminId } = this.props;
     api.getStoreInfo({ StoreId, AdminId })
       .then(res => {
-        console.log(res);
+        console.log(res.IsFristFree,'res');
         const {
           StoreRemarks, Id, StoreName, StoreTel, StoreType,
           LegalName,
@@ -231,7 +231,8 @@ export default class StoreAdd extends Component {
         nextBottomListData[5].value = String(CsTel);
         this.setState({
           topListData: nextTopListData,
-          bottomListData: nextBottomListData
+          bottomListData: nextBottomListData,
+          IsFristFree:!!IsFristFree
         })
         this.props.navigation.dispatch(
           action.editStoreInfo({
@@ -467,7 +468,7 @@ export default class StoreAdd extends Component {
                   api
                     .updateStore({ IsFristFree: v,StoreId })
                     .then(res => {
-                      console.log(res);
+                     // console.log(res);
                       this.setState({
                         IsFristFree: v
                       });
